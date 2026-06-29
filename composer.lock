@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7e47cceee5a7d14a0a0a814e2d31701",
+    "content-hash": "89122cdc5ab7163af9ed4328ebd09642",
     "packages": [
         {
             "name": "cloudinary/cloudinary_php",
@@ -1350,12 +1350,12 @@
             "version": "2.29.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/briannesbitt/Carbon.git",
+                "url": "https://github.com/CarbonPHP/carbon.git",
                 "reference": "e509be5bf2d703390e69e14496d9a1168452b0a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e509be5bf2d703390e69e14496d9a1168452b0a2",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/e509be5bf2d703390e69e14496d9a1168452b0a2",
                 "reference": "e509be5bf2d703390e69e14496d9a1168452b0a2",
                 "shasum": ""
             },
@@ -2079,12 +2079,12 @@
             "version": "1.8.11",
             "source": {
                 "type": "git",
-                "url": "https://github.com/renatomarinho/laravel-page-speed.git",
+                "url": "https://github.com/vinkius-labs/laravel-page-speed.git",
                 "reference": "6381182828de2e0bdaa52ca132cfa2c34b8b728b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/renatomarinho/laravel-page-speed/zipball/6381182828de2e0bdaa52ca132cfa2c34b8b728b",
+                "url": "https://api.github.com/repos/vinkius-labs/laravel-page-speed/zipball/6381182828de2e0bdaa52ca132cfa2c34b8b728b",
                 "reference": "6381182828de2e0bdaa52ca132cfa2c34b8b728b",
                 "shasum": ""
             },
@@ -3791,12 +3791,12 @@
             "version": "v3.2.8",
             "source": {
                 "type": "git",
-                "url": "https://github.com/barryvdh/laravel-debugbar.git",
+                "url": "https://github.com/fruitcake/laravel-debugbar.git",
                 "reference": "18208d64897ab732f6c04a19b319fe8f1d57a9c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/18208d64897ab732f6c04a19b319fe8f1d57a9c0",
+                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/18208d64897ab732f6c04a19b319fe8f1d57a9c0",
                 "reference": "18208d64897ab732f6c04a19b319fe8f1d57a9c0",
                 "shasum": ""
             },
