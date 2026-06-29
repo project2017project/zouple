@@ -244,22 +244,33 @@ class ProductController extends Controller
     
     public function product_listing(Request $request)
     {
-        if (!Schema::hasTable('products')) {
+        try {
+            if (!Schema::hasTable('products')) {
+                $data['product_data'] = collect([]);
+                $request->session()->flash('alert-warning', 'Product table is missing. Please run database migrations on Hostinger.');
+            } else {
+                $data['product_data'] = $this->productListQuery()
+                    ->orderBy('products.product_id', 'desc')
+                    ->get();
+            }
+        } catch (\Throwable $exception) {
+            \Log::error('Admin product list failed.', [
+                'message' => $exception->getMessage(),
+            ]);
+
             $data['product_data'] = collect([]);
-            $request->session()->flash('alert-warning', 'Product table is missing. Please run database migrations on Hostinger.');
-        } else {
-            $data['product_data'] = $this->productListQuery()
-                ->orderBy('products.product_id', 'desc')
-                ->get();
+            $request->session()->flash('alert-danger', 'Product list could not load because the production database structure is not ready. Please run migrations on Hostinger and try again.');
         }
         
         
         
          $page_title = "Product List - Zouple";
          $cateName = [];
-         $categories = Category::select('category_id', 'title')->get();
-         foreach ($categories as $category) {
-             $cateName[$category->category_id] = $category->title;
+         if (Schema::hasTable('categorys')) {
+             $categories = Category::select('category_id', 'title')->get();
+             foreach ($categories as $category) {
+                 $cateName[$category->category_id] = $category->title;
+             }
          }
          
         /* return $data;*/
@@ -1235,19 +1246,30 @@ class ProductController extends Controller
            return Redirect::back();
        }
 
-       $data['product_data'] = $this->productListQuery()
-           ->where(function ($query) use ($category) {
-               foreach ($category as $cat) {
-                   $query->orWhere('products.category', 'LIKE', '%"'.$cat.'"%');
-               }
-           })
-           ->orderBy('products.product_id', 'desc')
-           ->get();
+       try {
+           $data['product_data'] = $this->productListQuery()
+               ->where(function ($query) use ($category) {
+                   foreach ($category as $cat) {
+                       $query->orWhere('products.category', 'LIKE', '%"'.$cat.'"%');
+                   }
+               })
+               ->orderBy('products.product_id', 'desc')
+               ->get();
+       } catch (\Throwable $exception) {
+           \Log::error('Admin filtered product list failed.', [
+               'message' => $exception->getMessage(),
+           ]);
+
+           $data['product_data'] = collect([]);
+           $request->session()->flash('alert-danger','Filtered product list could not load because the production database structure is not ready. Please run migrations on Hostinger and try again.');
+       }
 
        $cateName = [];
-       $categories = Category::select('category_id', 'title')->get();
-       foreach ($categories as $catData) {
-           $cateName[$catData->category_id] = $catData->title;
+       if (Schema::hasTable('categorys')) {
+           $categories = Category::select('category_id', 'title')->get();
+           foreach ($categories as $catData) {
+               $cateName[$catData->category_id] = $catData->title;
+           }
        }
 
        return view('masters.product.product_list',compact('page_title', 'cateName'),$data);
@@ -1264,7 +1286,11 @@ class ProductController extends Controller
         $query = DB::table('products');
         AdminRecycleBinService::withoutDeleted($query, 'products');
 
-        if (Schema::hasTable('product_quantity')) {
+        if (
+            Schema::hasTable('product_quantity')
+            && Schema::hasColumn('product_quantity', 'product_quantity_id')
+            && Schema::hasColumn('product_quantity', 'product_id')
+        ) {
             $query->leftJoin('product_quantity as product_list_quantity', function ($join) {
                 $join->on(
                     'product_list_quantity.product_quantity_id',
