@@ -40,50 +40,54 @@ class VideoController extends Controller
     
     public function mainvideoUpdateStore(Request $request)
     {
-      $this->ensureVideoRow(1);
-      $file = $this->safeVideoFile($request);
-      if ($file && !$this->isValidVideoFile($file)) {
-          $request->session()->flash('alert-danger', 'Please upload a valid MP4, MOV, AVI, WMV, or WebM video up to 100 MB.');
+      try {
+          $this->ensureVideoRow(1);
+          $file = $this->safeVideoFile($request);
+          if ($file && !$this->isValidVideoFile($file)) {
+              $request->session()->flash('alert-danger', 'Please upload a valid MP4, MOV, AVI, WMV, or WebM video up to 100 MB.');
+              return Redirect::route('mainVideoUpdate');
+          }
+
+          $input = [];
+          $currentVideo = DB::table('video')->where('video_id', 1)->value('video');
+          if($request->request->has('remove_video'))
+          {
+              if ($currentVideo) {
+                  $this->deleteExistingVideo(1, $currentVideo);
+              }
+              $input['video'] = '';
+              $input['video_public_id'] = null;
+              $input['title'] = null;
+              $input['description'] = null;
+          }
+          elseif($file)
+          {
+              if ($currentVideo) {
+                  $this->deleteExistingVideo(1, $currentVideo);
+              }
+              
+              $upload = app(AdminMediaService::class)->uploadVideo($file, 'videos', 'video');
+              $input['video']= $upload['path'];
+              $input['video_public_id'] = $upload['public_id'];
+          } 
+          else
+          {
+               $request->session()->flash('alert-info', $this->missingVideoMessage($request, $currentVideo, 'main'));
+               return Redirect::route('mainVideoUpdate');
+          }
+
+          $this->saveVideoRow(1, $input);
+
+          $request->session()->flash('alert-success','Video Updated !!');
+          return Redirect::route('mainVideo');
+      } catch (\Throwable $exception) {
+          \Log::error('Main video update failed.', [
+              'message' => $exception->getMessage(),
+          ]);
+
+          $request->session()->flash('alert-danger', $this->friendlyVideoFailureMessage($exception));
           return Redirect::route('mainVideoUpdate');
       }
-
-      $input = [];
-      $currentVideo = DB::table('video')->where('video_id', 1)->value('video');
-      if($request->request->has('remove_video'))
-      {
-          if ($currentVideo) {
-              $this->deleteExistingVideo(1, $currentVideo);
-          }
-          $input['video'] = '';
-          if (Schema::hasColumn('video', 'video_public_id')) {
-              $input['video_public_id'] = null;
-          }
-          $input['title'] = null;
-          $input['description'] = null;
-      }
-      elseif($file)
-      {
-          if ($currentVideo) {
-              $this->deleteExistingVideo(1, $currentVideo);
-          }
-          
-          $upload = app(AdminMediaService::class)->uploadVideo($file, 'videos', 'video');
-          $input['video']= $upload['path'];
-          if (Schema::hasColumn('video', 'video_public_id')) {
-              $input['video_public_id'] = $upload['public_id'];
-          }
-      } 
-      else
-      {
-           $request->session()->flash('alert-info', $this->missingVideoMessage($request, $currentVideo, 'main'));
-           return Redirect::route('mainVideoUpdate');
-      }
-       $input['deleted_at'] = null;
-       $input['deleted_by'] = null;
-       DB::table('video')->where('video_id',1)->update($input);
-
-        $request->session()->flash('alert-success','Video Updated !!');
-        return Redirect::route('mainVideo');
     
     }
     
@@ -114,56 +118,59 @@ class VideoController extends Controller
     
     public function subvideoUpdateStore(Request $request)
     {
-      $this->ensureVideoRow(2);
-      $file = $this->safeVideoFile($request);
-      if ($file && !$this->isValidVideoFile($file)) {
-          $request->session()->flash('alert-danger', 'Please upload a valid MP4, MOV, AVI, WMV, or WebM video up to 100 MB.');
-          return Redirect::route('subVideoUpdate');
-      }
+      try {
+          $this->ensureVideoRow(2);
+          $file = $this->safeVideoFile($request);
+          if ($file && !$this->isValidVideoFile($file)) {
+              $request->session()->flash('alert-danger', 'Please upload a valid MP4, MOV, AVI, WMV, or WebM video up to 100 MB.');
+              return Redirect::route('subVideoUpdate');
+          }
 
-      $input = [
-          'title' => $request->input('title'),
-          'description' => $request->input('description'),
-      ];
-      $currentVideo = DB::table('video')->where('video_id', 2)->value('video');
-      if($request->request->has('remove_video'))
-      {
-          if ($currentVideo) {
-              $this->deleteExistingVideo(2, $currentVideo);
-          }
-          $input['video'] = '';
-          if (Schema::hasColumn('video', 'video_public_id')) {
-              $input['video_public_id'] = null;
-          }
-          $input['title'] = null;
-          $input['description'] = null;
-      }
-      else
-      {
-          if($file)
+          $input = [
+              'title' => $request->input('title'),
+              'description' => $request->input('description'),
+          ];
+          $currentVideo = DB::table('video')->where('video_id', 2)->value('video');
+          if($request->request->has('remove_video'))
           {
               if ($currentVideo) {
                   $this->deleteExistingVideo(2, $currentVideo);
               }
-             $upload = app(AdminMediaService::class)->uploadVideo($file, 'videos', 'video');
-             $input['video']= $upload['path'];
-             if (Schema::hasColumn('video', 'video_public_id')) {
-                 $input['video_public_id'] = $upload['public_id'];
-             }
+              $input['video'] = '';
+              $input['video_public_id'] = null;
+              $input['title'] = null;
+              $input['description'] = null;
           }
           else
           {
-              $request->session()->flash('alert-info', $this->missingVideoMessage($request, $currentVideo, 'sub'));
-              return Redirect::route('subVideoUpdate');
+              if($file)
+              {
+                  if ($currentVideo) {
+                      $this->deleteExistingVideo(2, $currentVideo);
+                  }
+                 $upload = app(AdminMediaService::class)->uploadVideo($file, 'videos', 'video');
+                 $input['video']= $upload['path'];
+                 $input['video_public_id'] = $upload['public_id'];
+              }
+              else
+              {
+                  $request->session()->flash('alert-info', $this->missingVideoMessage($request, $currentVideo, 'sub'));
+                  return Redirect::route('subVideoUpdate');
+              }
           }
-      }
-      
-       $input['deleted_at'] = null;
-       $input['deleted_by'] = null;
-       DB::table('video')->where('video_id',2)->update($input);
+          
+          $this->saveVideoRow(2, $input);
 
-        $request->session()->flash('alert-success','Video Updated !!');
-        return Redirect::route('subVideo');
+          $request->session()->flash('alert-success','Video Updated !!');
+          return Redirect::route('subVideo');
+      } catch (\Throwable $exception) {
+          \Log::error('Sub video update failed.', [
+              'message' => $exception->getMessage(),
+          ]);
+
+          $request->session()->flash('alert-danger', $this->friendlyVideoFailureMessage($exception));
+          return Redirect::route('subVideoUpdate');
+      }
     
     }
     
@@ -188,12 +195,16 @@ class VideoController extends Controller
 
     private function ensureVideoRow($videoId)
     {
+        if (!Schema::hasTable('video')) {
+            throw new \RuntimeException('Video table is missing. Please run database migrations on Hostinger.');
+        }
+
         $exists = DB::table('video')->where('video_id', $videoId)->exists();
         if ($exists) {
             return;
         }
 
-        DB::table('video')->insert([
+        DB::table('video')->insert($this->filterVideoColumns([
             'video_id' => $videoId,
             'video' => '',
             'title' => null,
@@ -201,7 +212,31 @@ class VideoController extends Controller
             '_token' => '',
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ]));
+    }
+
+    private function saveVideoRow($videoId, array $input)
+    {
+        $input['deleted_at'] = null;
+        $input['deleted_by'] = null;
+        $input['updated_at'] = now();
+
+        $input = $this->filterVideoColumns($input);
+        if (empty($input)) {
+            return;
+        }
+
+        DB::table('video')->where('video_id', $videoId)->update($input);
+    }
+
+    private function filterVideoColumns(array $input)
+    {
+        if (!Schema::hasTable('video')) {
+            return [];
+        }
+
+        $columns = array_flip(Schema::getColumnListing('video'));
+        return array_intersect_key($input, $columns);
     }
 
     private function safeVideoFile(Request $request)
@@ -375,5 +410,24 @@ class VideoController extends Controller
             : null;
 
         app(AdminMediaService::class)->deleteMedia($video, 'video', $publicId, 'video');
+    }
+
+    private function friendlyVideoFailureMessage(\Throwable $exception)
+    {
+        $message = $exception->getMessage();
+
+        if (stripos($message, 'Cloudinary') !== false) {
+            return 'Cloudinary video upload failed. Please check Cloudinary cloud name, API key, API secret, and account upload limits.';
+        }
+
+        if (stripos($message, 'Invalid upload file') !== false) {
+            return 'The uploaded video temp file was not available when Cloudinary tried to save it. Please upload again; if it repeats, increase PHP upload_tmp_dir permissions on Hostinger.';
+        }
+
+        if (stripos($message, 'Base table or view not found') !== false || stripos($message, 'Unknown column') !== false) {
+            return 'Video database columns are not ready on Hostinger. Please run migrations, then upload again.';
+        }
+
+        return 'Video upload failed on the server. Please check storage/logs/laravel.log for the exact message.';
     }
 }
