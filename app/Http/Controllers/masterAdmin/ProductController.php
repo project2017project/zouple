@@ -244,16 +244,14 @@ class ProductController extends Controller
     
     public function product_listing(Request $request)
     {
-       /* $data['product_data'] = DB::table('products')
-             ->orderBy('products.product_id', 'DESC')
-             ->get();
-        */
-        
-        $data['product_data'] = Product::leftJoin('product_quantity', function ($join) {
-                $join->on('product_quantity.product_quantity_id', '=', DB::raw('(SELECT product_quantity_id FROM product_quantity WHERE product_quantity.product_id = products.product_id LIMIT 1)'));})
-       ->select($this->productListColumns())
-       ->orderBy('products.product_id', 'desc')
-       ->get();
+        if (!Schema::hasTable('products')) {
+            $data['product_data'] = collect([]);
+            $request->session()->flash('alert-warning', 'Product table is missing. Please run database migrations on Hostinger.');
+        } else {
+            $data['product_data'] = $this->productListQuery()
+                ->orderBy('products.product_id', 'desc')
+                ->get();
+        }
         
         
         
@@ -1232,10 +1230,12 @@ class ProductController extends Controller
            return Redirect::back();
        }
 
-       $data['product_data'] = Product::leftJoin('product_quantity', function ($join) {
-               $join->on('product_quantity.product_quantity_id', '=', DB::raw('(SELECT product_quantity_id FROM product_quantity WHERE product_quantity.product_id = products.product_id LIMIT 1)'));
-           })
-           ->select($this->productListColumns())
+       if (!Schema::hasTable('products')) {
+           $request->session()->flash('alert-warning','Product table is missing. Please run database migrations on Hostinger.');
+           return Redirect::back();
+       }
+
+       $data['product_data'] = $this->productListQuery()
            ->where(function ($query) use ($category) {
                foreach ($category as $cat) {
                    $query->orWhere('products.category', 'LIKE', '%"'.$cat.'"%');
@@ -1256,19 +1256,57 @@ class ProductController extends Controller
 
     private function productListColumns()
     {
-        return [
+        return $this->productListSelectColumns('product_list_quantity');
+    }
+
+    private function productListQuery()
+    {
+        $query = DB::table('products');
+        AdminRecycleBinService::withoutDeleted($query, 'products');
+
+        if (Schema::hasTable('product_quantity')) {
+            $query->leftJoin('product_quantity as product_list_quantity', function ($join) {
+                $join->on(
+                    'product_list_quantity.product_quantity_id',
+                    '=',
+                    DB::raw('(SELECT MIN(pq.product_quantity_id) FROM product_quantity pq WHERE pq.product_id = products.product_id)')
+                );
+            });
+
+            return $query->select($this->productListSelectColumns('product_list_quantity'));
+        }
+
+        return $query->select($this->productListSelectColumns(null));
+    }
+
+    private function productListSelectColumns($quantityAlias = null)
+    {
+        $columns = [
             'products.*',
-            'product_quantity.product_quantity_id as list_product_quantity_id',
-            'product_quantity.product_quantity as list_product_quantity',
-            'product_quantity.rupee_price',
-            'product_quantity.dollar_price',
-            'product_quantity.euro_price',
-            'product_quantity.product_discount',
-            'product_quantity.rupee_net_amount',
-            'product_quantity.rupee_net_with_gst',
-            'product_quantity.dollar_net_with_gst',
-            'product_quantity.euro_net_with_gst',
         ];
+
+        $quantityColumns = [
+            'product_quantity_id' => 'list_product_quantity_id',
+            'product_quantity' => 'list_product_quantity',
+            'rupee_price' => 'rupee_price',
+            'dollar_price' => 'dollar_price',
+            'euro_price' => 'euro_price',
+            'product_discount' => 'product_discount',
+            'rupee_net_amount' => 'rupee_net_amount',
+            'rupee_net_with_gst' => 'rupee_net_with_gst',
+            'dollar_net_with_gst' => 'dollar_net_with_gst',
+            'euro_net_with_gst' => 'euro_net_with_gst',
+        ];
+
+        foreach ($quantityColumns as $column => $alias) {
+            if ($quantityAlias && Schema::hasColumn('product_quantity', $column)) {
+                $columns[] = $quantityAlias . '.' . $column . ' as ' . $alias;
+            } else {
+                $columns[] = DB::raw('NULL as ' . $alias);
+            }
+        }
+
+        return $columns;
     }
 
     public function exportSelctedProductPage(Request $request)
