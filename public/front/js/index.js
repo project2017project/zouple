@@ -9,11 +9,11 @@ $(document).ready(function () {
         $(window).scroll(function () {
             $(window).scrollTop() <= 400 ? e.removeClass("stickbtnposition-fixed") : e.addClass("stickbtnposition-fixed")
         })
-    }), $(".btn-num-product-down").on("click", function (e) {
+    }), $(".btn-num-product-down:not([onclick])").on("click", function (e) {
         e.preventDefault();
         var n = Number($(this).next().val());
         1 < n && $(this).next().val(n - 1)
-    }), $(".btn-num-product-up").on("click", function (e) {
+    }), $(".btn-num-product-up:not([onclick])").on("click", function (e) {
         e.preventDefault();
         var n = Number($(this).prev().val());
         $(this).prev().val(n + 1)

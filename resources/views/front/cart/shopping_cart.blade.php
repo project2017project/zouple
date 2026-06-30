@@ -17,7 +17,7 @@
 
 <script>
     function updateProductFilter(i) {
-        var pro_qty = $('#qty' + i).val();
+        var pro_qty = normalizeCartQty(i);
         var cart_id = $('#cart_id' + i).val();
 
         var product_id = $('#product_id' + i).val();
@@ -64,16 +64,47 @@
 
     }
 
-    function updateProductQty(i, str) {
-        var pro_qty = $('#qty' + i).val();
+    function normalizeCartQty(i, options) {
+        options = options || {};
+        var qtyInput = $('#qty' + i);
+        var rawValue = $.trim(qtyInput.val());
+
+        if (rawValue === '') {
+            if (options.allowBlank) {
+                return null;
+            }
+            qtyInput.val(1);
+            return 1;
+        }
+
+        var qty = parseInt(rawValue, 10);
+        if (isNaN(qty) || qty < 1) {
+            qty = 1;
+        }
+
+        qtyInput.val(qty);
+        return qty;
+    }
+
+    function updateProductQty(i, str, forceNormalize) {
+        var pro_qty = normalizeCartQty(i, {allowBlank: str == "sam" && !forceNormalize});
+        if (pro_qty === null) {
+            return;
+        }
+
         var cart_id = $('#cart_id' + i).val();
         if (str == "min") {
-            pro_qty = parseInt(pro_qty) - 1;
+            pro_qty = pro_qty - 1;
         } else if (str == "max") {
-            pro_qty = parseInt(pro_qty) + 1;
-        } else {
-            pro_qty = pro_qty;
+            pro_qty = pro_qty + 1;
         }
+
+        if (pro_qty < 1) {
+            pro_qty = 1;
+        }
+
+        $('#qty' + i).val(pro_qty);
+
         var product_id = $('#product_id' + i).val();
         $.ajax({
             url: 'getAttributesList/' + product_id,
@@ -308,13 +339,13 @@
                     <!--<div class="col-12 col-sm-8 py-2  px-0 d-flex align-self-center priceCart2">
 
                         <div class="flex-w bo5 of-hidden">
-                            <button class="btn-num-product-down" style="background-color:black;" onclick="updateProductQty({{$i}},'min')">
+                            <button type="button" class="btn-num-product-down" style="background-color:black;" onclick="updateProductQty({{$i}},'min')">
                                 <i class="fs-12 fa fa-minus text-white" aria-hidden="true" aria-hidden="true"></i>
                             </button>
 
-                            <input class=" w-25 text-center num-product" type="number" name="num-product1" value="{{$data->product_qty}}" id="qty{{$i}}" onkeyup="updateProductQty({{$i}},'sam')">
+                            <input class=" w-25 text-center num-product" type="number" name="num-product1" value="{{$data->product_qty}}" id="qty{{$i}}" min="1" onkeyup="updateProductQty({{$i}},'sam')" onblur="updateProductQty({{$i}},'sam', true)">
 
-                            <button class="btn-num-product-up " style="background-color:black;" onclick="updateProductQty({{$i}},'max')">
+                            <button type="button" class="btn-num-product-up " style="background-color:black;" onclick="updateProductQty({{$i}},'max')">
                                 <i class="fs-12 fa fa-plus text-white" aria-hidden="true"></i>
                             </button>
                         </div>

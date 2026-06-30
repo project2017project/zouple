@@ -56,7 +56,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeFlashQty();
         var vendor_id = $('#vendor').val();
         var product_id = $('#product_id').val();
         var ip_address = $('#ip_address').val();
@@ -97,7 +97,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeFlashQty();
         var vendor_id = $('#vendor').val();
         var product_id = $('#product_id').val();
         var ip_address = $('#ip_address').val();
@@ -138,7 +138,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeFlashQty();
         var product_id = $('#product_id').val();
         var ip_address = $('#ip_address').val();
 
@@ -160,6 +160,71 @@
         swal("Oops!", 'Your product is outstock.', "warning");
     }
 
+    function getSafeFlashQty(options) {
+        options = options || {};
+        var qtyInput = $('#qty');
+        var rawValue = $.trim(qtyInput.val());
+
+        if (rawValue === '') {
+            if (options.allowBlank) {
+                return null;
+            }
+            qtyInput.val(1);
+            return 1;
+        }
+
+        var qty = parseInt(rawValue, 10);
+        if (isNaN(qty) || qty < 1) {
+            qty = 1;
+        }
+
+        qtyInput.val(qty);
+        return qty;
+    }
+
+    function changeQuantity(str, forceNormalize) {
+        var filter = new Array();
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m == "0") {
+            swal("Oops!", 'Please select product {{$data->attribute_name}}', "warning");
+            return;
+        }
+        filter.push(m);
+        @endforeach
+
+        var pro_qty = getSafeFlashQty({allowBlank: str === 'equal' && !forceNormalize});
+        if (pro_qty === null) {
+            return;
+        }
+
+        if (str == "min") {
+            pro_qty = pro_qty - 1;
+        } else if (str == "max") {
+            pro_qty = pro_qty + 1;
+        }
+
+        if (pro_qty < 1) {
+            pro_qty = 1;
+        }
+
+        $('#qty').val(pro_qty);
+
+        var product_id = $('#product_id').val();
+        $.ajax({
+            url: '../checkflashsalesFilterPrice',
+            type: "GET",
+            beforeSend: function() { $('#wait').show(); },
+            complete: function() { $('#wait').hide(); },
+            data: "filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id,
+            success: function(data) {
+                if (data['price'] != 0) {
+                    $('#price').html(data['price']);
+                }
+            }
+        });
+    }
+
     function reloadPage() {
         location.reload();
     }
@@ -174,7 +239,7 @@
         }
         @endforeach
         var product_id = $('#product_id').val();
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeFlashQty();
         $.ajax({
             url: '../checkflashsalesFilterPrice',
             type: "GET",
@@ -411,13 +476,13 @@
                             
                             
                             <!--<div class="flex-w bo5 of-hidden">
-                                <button class="btn-num-product-down" style="background-color:black;" onclick="changeQuantity('min')">
+                                <button type="button" class="btn-num-product-down" style="background-color:black;" onclick="changeQuantity('min')">
                                     <i class="fs-12 fa fa-minus text-white" aria-hidden="true"></i>
                                 </button>
         
-                                <input class=" w-25 text-center num-product" type="number" name="qty" value="1" id="qty" onkeyup="changeQuantity('equal')">
+                                <input class=" w-25 text-center num-product" type="number" name="qty" value="1" id="qty" min="1" onkeyup="changeQuantity('equal')" onblur="changeQuantity('equal', true)">
         
-                                <button class="btn-num-product-up " style="background-color:black;" onclick="changeQuantity('max')">
+                                <button type="button" class="btn-num-product-up " style="background-color:black;" onclick="changeQuantity('max')">
                                     <i class="fs-12 fa fa-plus text-white" aria-hidden="true"></i>
                                 </button>
                             </div>-->

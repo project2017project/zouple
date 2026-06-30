@@ -66,7 +66,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeProductQty();
         var vendor_id = $('#vendor').val();
         var product_id = $('#product_id').val();
         var ip_address = $('#ip_address').val();
@@ -118,7 +118,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeProductQty();
         var vendor_id = $('#vendor').val();
         var product_id = $('#product_id').val();
         var ip_address = $('#ip_address').val();
@@ -169,7 +169,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeProductQty();
         var vendor_id = $('#vendor').val();
         var product_id = $('#product_id').val();
         var ip_address = $('#ip_address').val();
@@ -220,7 +220,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeProductQty();
         var product_id = $('#product_id').val();
         var ip_address = $('#ip_address').val();
 
@@ -240,11 +240,38 @@
         return isNaN(qty) || qty < 0 ? 0 : qty;
     }
 
+    function getSafeProductQty(options) {
+        options = options || {};
+        var qtyInput = $('#qty');
+        var rawValue = $.trim(qtyInput.val());
+
+        if (rawValue === '') {
+            if (options.allowBlank) {
+                return null;
+            }
+            qtyInput.val(1);
+            return 1;
+        }
+
+        var qty = parseInt(rawValue, 10);
+        if (isNaN(qty) || qty < 1) {
+            qty = 1;
+        }
+
+        var maxQty = parseInt(qtyInput.attr('max'), 10);
+        if (!isNaN(maxQty) && maxQty > 0 && qty > maxQty) {
+            qty = maxQty;
+        }
+
+        qtyInput.val(qty);
+        return qty;
+    }
+
     function syncProductQuantityState(data) {
         var availableQty = normalizeStockQty(data['qty']);
-        var currentQty = parseInt($('#qty').val(), 10);
+        var currentQty = getSafeProductQty({allowBlank: true});
 
-        if (isNaN(currentQty) || currentQty < 1) {
+        if (currentQty === null || isNaN(currentQty) || currentQty < 1) {
             currentQty = 1;
         }
 
@@ -266,7 +293,7 @@
 
 
 
-    function changeQuantity(str) {
+    function changeQuantity(str, forceNormalize) {
         var filter = new Array();
         @foreach($att_val as $data)
         var m = $('#{{$data->attribute_name}}').val();
@@ -278,20 +305,22 @@
             filter.push(m);
         }
         @endforeach
-        var pro_qty = parseInt($('#qty').val(), 10);
-        if (isNaN(pro_qty) || pro_qty < 1) {
-            pro_qty = 1;
+        var pro_qty = getSafeProductQty({allowBlank: str === 'equal' && !forceNormalize});
+
+        if (pro_qty === null) {
+            return;
         }
+
         if (str == "min") {
-            pro_qty = parseInt(pro_qty) - 1;
+            pro_qty = pro_qty - 1;
         } else if (str == "max") {
-            pro_qty = parseInt(pro_qty) + 1;
-        } else {
-            pro_qty = pro_qty;
+            pro_qty = pro_qty + 1;
         }
+
         if (pro_qty < 1) {
             pro_qty = 1;
         }
+
         $('#qty').val(pro_qty);
 
         var product_id = $('#product_id').val();
@@ -364,11 +393,7 @@
         }
         @endforeach
         var product_id = $('#product_id').val();
-        var pro_qty = parseInt($('#qty').val(), 10);
-        if (isNaN(pro_qty) || pro_qty < 1) {
-            pro_qty = 1;
-            $('#qty').val(pro_qty);
-        }
+        var pro_qty = getSafeProductQty();
         $.ajax({
             url: '../checkProductFilterPrice',
             type: "GET",
@@ -476,7 +501,7 @@
         }
 
         @endforeach
-        var pro_qty = $('#qty').val();
+        var pro_qty = getSafeProductQty();
         var vendor_id = $('#vendor').val();
         var product_id = $('#product_id').val();
         if (yesNow > 0) {
@@ -757,13 +782,13 @@
             <div class="row mx-3 py-2">
                 <div class="col-12 col-sm-4 py-2  priceCart2">
                     <div class="flex-w bo5 of-hidden zouple-qty-control">
-                        <button class="btn-num-product-down" style="background-color:black;" onclick="changeQuantity('min')" @if($proQty <= 0) disabled @endif>
+                        <button type="button" class="btn-num-product-down" style="background-color:black;" onclick="changeQuantity('min')" @if($proQty <= 0) disabled @endif>
                             <i class="fs-12 fa fa-minus text-white" aria-hidden="true"></i>
                         </button>
 
-                        <input class=" w-25 text-center num-product" type="number" name="qty" value="1" min="1" max="{{ $proQty > 0 ? $proQty : 1 }}" id="qty" onkeyup="changeQuantity('equal')" @if($proQty <= 0) disabled @endif>
+                        <input class=" w-25 text-center num-product" type="number" name="qty" value="1" min="1" max="{{ $proQty > 0 ? $proQty : 1 }}" id="qty" onkeyup="changeQuantity('equal')" onblur="changeQuantity('equal', true)" @if($proQty <= 0) disabled @endif>
 
-                        <button class="btn-num-product-up " style="background-color:black;" onclick="changeQuantity('max')" @if($proQty <= 0) disabled @endif>
+                        <button type="button" class="btn-num-product-up " style="background-color:black;" onclick="changeQuantity('max')" @if($proQty <= 0) disabled @endif>
                             <i class="fs-12 fa fa-plus text-white" aria-hidden="true"></i>
                         </button>
                     </div>
