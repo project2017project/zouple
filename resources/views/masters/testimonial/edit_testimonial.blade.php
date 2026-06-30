@@ -36,6 +36,8 @@
                     @php
                         $testimonialImage = trim((string) $data->image);
                         $hasTestimonialImage = z_media_exists($testimonialImage, 'testimonial');
+                        $platformLogo = isset($data->platform_logo) ? trim((string) $data->platform_logo) : '';
+                        $hasPlatformLogo = z_media_exists($platformLogo, 'testimonial-logos');
                     @endphp
                     <form action="{{route('testimonialEdit_save')}}" method="post" enctype="multipart/form-data">
                       @csrf
@@ -78,6 +80,27 @@
                                     <div class="admin-testimonial-placeholder">
                                         {{ strtoupper(substr(trim($data->name ?: 'Z'), 0, 1)) }}
                                     </div>
+                                @endif
+                            </div>
+
+                            {{-- Platform logo edit: replace or remove optional source logo. --}}
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label"> Platform Logo <small class="text-muted">(optional)</small></label>
+                                    <input class="form-control" type="file" name="platform_logo" accept="image/png,image/jpeg,image/svg+xml,image/webp">
+                                    <small class="text-muted">Upload JPG, PNG, SVG, or WebP up to 4 MB.</small>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 pb-4">
+                                @if($hasPlatformLogo)
+                                    <img src="{{ z_media_url($platformLogo, 'testimonial-logos') }}" class="admin-platform-logo-thumb" alt="Platform logo for {{ $data->name }}" onerror="this.style.display='none';">
+                                    <label class="d-block mt-2 mb-0">
+                                        <input type="checkbox" name="remove_platform_logo" value="1">
+                                        <span class="text-danger">Remove platform logo</span>
+                                    </label>
+                                @else
+                                    <small class="text-muted">No platform logo uploaded.</small>
                                 @endif
                             </div>
                             

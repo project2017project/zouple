@@ -347,6 +347,7 @@ Route::group([ 'middleware' => ['auth_front','web_mid']], function ()
 
 Route::group(array('prefix' => 'masterAdmin','namespace'=>'masterAdmin'), function(){
    Route::group([ 'middleware' => ['guest_admin']], function () {
+        Route::any('', ['as' => 'admin.root.clean', 'uses' => 'MasterAdmin@login']);
         Route::any('/', ['as' => 'admin.root', 'uses' => 'MasterAdmin@login']);
         Route::any('/login', ['as' => 'admin.login', 'uses' => 'MasterAdmin@login']);
   });

@@ -159,6 +159,18 @@ input[type="submit"]:hover {
     opacity: .88;
 }
 
+/* Testimonial platform logo preview: optional source logo beside frontend stars. */
+.admin-platform-logo-thumb {
+    width: auto;
+    max-width: 96px;
+    max-height: 42px;
+    object-fit: contain;
+    border: 1px solid #d7e4e0;
+    border-radius: 10px;
+    background: #fff;
+    padding: 8px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;

@@ -39,6 +39,7 @@
                                 <tr>
                                     <th>S.No</th>
                                     <th> Testimonial Image </th>
+                                    <th> Platform Logo </th>
                                     <th> Name </th>
                                     <th> Heading</th>
                                     <th> Description </th>
@@ -53,6 +54,8 @@
                                 @php
                                     $testimonialImage = trim((string) $data->image);
                                     $hasTestimonialImage = z_media_exists($testimonialImage, 'testimonial');
+                                    $platformLogo = isset($data->platform_logo) ? trim((string) $data->platform_logo) : '';
+                                    $hasPlatformLogo = z_media_exists($platformLogo, 'testimonial-logos');
                                 @endphp
                                 <tr>
                                     <td>{{$i}}.</td>
@@ -63,6 +66,12 @@
                                             <div class="admin-testimonial-placeholder">
                                                 {{ strtoupper(substr(trim($data->name ?: 'Z'), 0, 1)) }}
                                             </div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{-- Optional platform logo preview; blank when no valid logo exists. --}}
+                                        @if($hasPlatformLogo)
+                                            <img src="{{ z_media_url($platformLogo, 'testimonial-logos') }}" class="admin-platform-logo-thumb" alt="Platform logo for {{ $data->name }}" onerror="this.style.display='none';">
                                         @endif
                                     </td>
                                     <td>{{$data->name}}</td>

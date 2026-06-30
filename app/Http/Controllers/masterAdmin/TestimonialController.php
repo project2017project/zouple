@@ -10,6 +10,7 @@ use Validator;
 use DB; 
 use App\Services\AdminRecycleBinService;
 use App\Services\AdminMediaService;
+use App\Services\CloudinaryService;
 
 class TestimonialController extends Controller
 {
@@ -34,11 +35,14 @@ class TestimonialController extends Controller
           'heading' => 'required|string|max:500',
           'description' => 'required|string|max:2000',
           'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:4096',
+          'platform_logo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp|max:4096',
       ], [
           'image.required' => 'Please upload a testimonial image.',
           'image.image' => 'The testimonial file must be a valid image.',
           'image.mimes' => 'Please upload JPG, PNG, GIF, or WebP image only.',
           'image.max' => 'The testimonial image must be 4 MB or smaller.',
+          'platform_logo.mimes' => 'Please upload a JPG, PNG, SVG, or WebP platform logo only.',
+          'platform_logo.max' => 'The platform logo must be 4 MB or smaller.',
       ]);
 
       $input = $this->safeInput($request);
@@ -63,10 +67,25 @@ class TestimonialController extends Controller
           return Redirect::back()->withInput();
       }
 
+      // Platform logo is optional and independent from the customer image.
+      if($request->hasFile('platform_logo') && $request->file('platform_logo')->isValid())
+      {
+          try {
+              $input['platform_logo'] = $this->storePlatformLogo($request->file('platform_logo'));
+          } catch (\Exception $e) {
+              $this->deleteTestimonialImage($input['image']);
+              $request->session()->flash('alert-danger','The platform logo could not be saved. Please upload JPG, PNG, SVG, or WebP up to 4 MB.');
+              return Redirect::back()->withInput();
+          }
+      }
+
       try {
           DB::table('testimonial')->insert($input);
       } catch (\Exception $e) {
           $this->deleteTestimonialImage($input['image']);
+          if (!empty($input['platform_logo'])) {
+              $this->deletePlatformLogo($input['platform_logo']);
+          }
           $request->session()->flash('alert-danger','The testimonial could not be saved. Please try again.');
           return Redirect::back()->withInput();
       }
@@ -85,7 +104,9 @@ class TestimonialController extends Controller
   public function testimonialEditUpdate(Request $request)
     {
       $testimonial_id = $request->testimonial_id;
-      $currentImage = DB::table('testimonial')->where('testimonial_id','=',$testimonial_id)->value('image');
+      $current = DB::table('testimonial')->where('testimonial_id','=',$testimonial_id)->first();
+      $currentImage = $current ? $current->image : null;
+      $currentPlatformLogo = $current && isset($current->platform_logo) ? $current->platform_logo : null;
       $currentImagePath = public_path('upload/testimonial/').$currentImage;
       $needsImage = empty($currentImage) || (!preg_match('#^https?://#i', $currentImage) && !File::exists($currentImagePath));
 
@@ -95,11 +116,15 @@ class TestimonialController extends Controller
           'heading' => 'required|string|max:500',
           'description' => 'required|string|max:2000',
           'image' => ($needsImage ? 'required' : 'nullable') . '|image|mimes:jpeg,jpg,png,gif,webp|max:4096',
+          'platform_logo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp|max:4096',
+          'remove_platform_logo' => 'nullable|in:1',
       ], [
           'image.required' => 'Please upload a testimonial image because this testimonial does not have a saved image.',
           'image.image' => 'The testimonial file must be a valid image.',
           'image.mimes' => 'Please upload JPG, PNG, GIF, or WebP image only.',
           'image.max' => 'The testimonial image must be 4 MB or smaller.',
+          'platform_logo.mimes' => 'Please upload a JPG, PNG, SVG, or WebP platform logo only.',
+          'platform_logo.max' => 'The platform logo must be 4 MB or smaller.',
       ]);
 
       $input = $this->safeInput($request);
@@ -127,6 +152,35 @@ class TestimonialController extends Controller
       {
           unset($input['image']);
       }
+
+      $oldLogoToDelete = null;
+      if($request->hasFile('platform_logo') && $request->file('platform_logo')->isValid())
+      {
+          try {
+              $input['platform_logo'] = $this->storePlatformLogo($request->file('platform_logo'));
+          } catch (\Exception $e) {
+              if (!empty($input['image'])) {
+                  $this->deleteTestimonialImage($input['image']);
+              }
+              $request->session()->flash('alert-danger','The platform logo could not be saved. Please upload JPG, PNG, SVG, or WebP up to 4 MB.');
+              return Redirect::back()->withInput();
+          }
+
+          if($currentPlatformLogo && $currentPlatformLogo !== $input['platform_logo']) {
+              $oldLogoToDelete = $currentPlatformLogo;
+          }
+      }
+      elseif($request->input('remove_platform_logo') === '1')
+      {
+          $input['platform_logo'] = null;
+          if ($currentPlatformLogo) {
+              $oldLogoToDelete = $currentPlatformLogo;
+          }
+      }
+      else
+      {
+          unset($input['platform_logo']);
+      }
       
       try {
           DB::table('testimonial')->where('testimonial_id','=',$testimonial_id)->update($input);
@@ -134,12 +188,19 @@ class TestimonialController extends Controller
           if (!empty($input['image'])) {
               $this->deleteTestimonialImage($input['image']);
           }
+          if (!empty($input['platform_logo'])) {
+              $this->deletePlatformLogo($input['platform_logo']);
+          }
           $request->session()->flash('alert-danger','The testimonial could not be updated. Please try again.');
           return Redirect::back()->withInput();
       }
 
       if ($oldImageToDelete) {
           $this->deleteTestimonialImage($oldImageToDelete);
+      }
+
+      if ($oldLogoToDelete) {
+          $this->deletePlatformLogo($oldLogoToDelete);
       }
 
         $request->session()->flash('alert-success','Testimonial has been successfully updated.');
@@ -159,6 +220,8 @@ class TestimonialController extends Controller
   {
       $input = array_merge($request->query->all(), $request->request->all());
       unset($input['existing_image']);
+      unset($input['existing_platform_logo']);
+      unset($input['remove_platform_logo']);
       unset($input['_token']);
       unset($input['testimonial_id']);
 
@@ -180,6 +243,32 @@ class TestimonialController extends Controller
       return $upload['path'];
   }
 
+  private function storePlatformLogo($file)
+  {
+      $cloudinary = app(CloudinaryService::class);
+      if ($cloudinary->isConfigured()) {
+          $upload = $cloudinary->uploadImage($file, 'testimonial-logos');
+          if (!empty($upload['url'])) {
+              return $upload['url'];
+          }
+      }
+
+      return $this->storeLocalPlatformLogo($file);
+  }
+
+  private function storeLocalPlatformLogo($file)
+  {
+      $directory = public_path('uploads/testimonial-logos');
+      if (!File::exists($directory)) {
+          File::makeDirectory($directory, 0755, true);
+      }
+
+      $filename = $this->makeImageName($file->getClientOriginalName());
+      $file->move($directory, $filename);
+
+      return 'uploads/testimonial-logos/' . $filename;
+  }
+
   private function deleteTestimonialImage($filename)
   {
       $filename = trim((string) $filename);
@@ -188,5 +277,21 @@ class TestimonialController extends Controller
       }
 
       app(AdminMediaService::class)->deleteMedia($filename, 'testimonial', null, 'image');
+  }
+
+  private function deletePlatformLogo($filename)
+  {
+      $filename = trim((string) $filename);
+      if ($filename === '') {
+          return;
+      }
+
+      $localPath = public_path(ltrim(str_replace('\\', '/', $filename), '/'));
+      if (!preg_match('#^https?://#i', $filename) && File::exists($localPath)) {
+          File::delete($localPath);
+          return;
+      }
+
+      app(AdminMediaService::class)->deleteMedia($filename, 'testimonial-logos', null, 'image');
   }
 }

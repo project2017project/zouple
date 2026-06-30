@@ -437,6 +437,9 @@ for (var i = 0, l = videos.length; i < l; i++) {
         position: relative;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
+        min-height: 360px;
+        display: flex;
+        flex-direction: column;
     }
     .review-slide-card:hover {
         border-color: rgba(198,168,103,0.5);
@@ -459,12 +462,56 @@ for (var i = 0, l = videos.length; i < l; i++) {
         letter-spacing: 2px;
         margin-bottom: 14px;
     }
+    .review-slide-card > .review-stars {
+        display: none;
+    }
+    .review-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 24px;
+        margin-bottom: 14px;
+        position: relative;
+        z-index: 1;
+    }
+    .review-rating-row .review-stars {
+        display: block;
+        margin-bottom: 0;
+    }
+    .review-platform-logo {
+        display: block;
+        max-height: 22px;
+        width: auto;
+        max-width: 64px;
+        object-fit: contain;
+    }
+    .review-platform-logo-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 28px;
+        padding: 4px 7px;
+        border: 1px solid rgba(198,168,103,0.24);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        overflow: hidden;
+    }
     .review-text {
         color: rgba(255,255,255,0.82);
         font-size: 0.97rem;
         line-height: 1.75;
         margin-bottom: 22px;
-        min-height: 80px;
+        min-height: 104px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+    .review-customer-row {
+        margin-top: auto;
     }
     .review-avatar {
         width: 52px;
@@ -493,11 +540,19 @@ for (var i = 0, l = videos.length; i < l; i++) {
         font-weight: 700;
         color: #fff;
         font-size: 1rem;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
     }
     .review-heading-tag {
         color: rgba(198,168,103,0.8);
         font-size: 0.82rem;
         letter-spacing: 0.5px;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        overflow-wrap: anywhere;
     }
     .owl-dots .owl-dot span {
         background: rgba(198,168,103,0.3) !important;
@@ -516,13 +571,26 @@ for (var i = 0, l = videos.length; i < l; i++) {
             @php
                 $testimonialImage = trim((string) $t->image);
                 $hasTestimonialImage = z_media_exists($testimonialImage, 'testimonial');
+                $platformLogo = isset($t->platform_logo) ? trim((string) $t->platform_logo) : '';
+                $hasPlatformLogo = z_media_exists($platformLogo, 'testimonial-logos');
+                $reviewText = html_entity_decode(strip_tags((string) $t->description), ENT_QUOTES, 'UTF-8');
+                $reviewText = trim(preg_replace('/\s+/u', ' ', str_replace("\xc2\xa0", ' ', $reviewText)));
             @endphp
             <div class="item">
                 <div class="review-slide-card">
                     <div class="review-quote">&ldquo;</div>
+                    {{-- Optional platform logo replaces the old stray symbol beside the rating. --}}
+                    <div class="review-rating-row">
+                        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        @if($hasPlatformLogo)
+                            <span class="review-platform-logo-wrap">
+                                <img src="{{ z_media_url($platformLogo, 'testimonial-logos') }}" class="review-platform-logo" alt="Review platform logo" loading="lazy" decoding="async" onerror="this.parentNode.style.display='none';">
+                            </span>
+                        @endif
+                    </div>
                     <div class="review-stars">★★★★★</div>
-                    <div class="review-text">{{ strip_tags($t->description) }}</div>
-                    <div class="d-flex align-items-center">
+                    <div class="review-text">{{ $reviewText }}</div>
+                    <div class="d-flex align-items-center review-customer-row">
                         @if($hasTestimonialImage)
                         <img src="{{ z_media_url($testimonialImage, 'testimonial') }}" class="review-avatar" alt="{{$t->name}}">
                         @else

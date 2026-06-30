@@ -38,43 +38,43 @@ class HomeController extends Controller
         
         $count_down = date('M d, Y 00:00:00');
         
-       $data['cate_data'] = Category::where('is_show',"SHOW")->get();
+       $data['cate_data'] = Schema::hasTable('categorys')
+           ? AdminRecycleBinService::activeTable('categorys')->where('is_show',"SHOW")->get()
+           : collect([]);
         
-       $siteInfo = DB::table('siteinfos')->where('siteinfo_id', 1)->first();
+       $siteInfo = Schema::hasTable('siteinfos') ? DB::table('siteinfos')->where('siteinfo_id', 1)->first() : null;
        $whatsappNumber = $siteInfo && !empty($siteInfo->whatsapp_number) ? $siteInfo->whatsapp_number : ($siteInfo->phone_number ?? '');
        $data['bulk_whatsapp_link'] = 'https://wa.me/' . preg_replace('/\D+/', '', $whatsappNumber) . '?text=' . rawurlencode('Hello Zouple, I want to enquire about bulk order.');
        $data['blog_data'] = collect([]);
         
-       $videoQuery = AdminRecycleBinService::activeTable('video');
-       $data['main_video'] = $videoQuery->get();
+       $data['main_video'] = Schema::hasTable('video') ? AdminRecycleBinService::activeTable('video')->get() : collect([]);
         
        
 
-       $data['slider_data'] = AdminRecycleBinService::activeTable('sliders')->where('is_active', 'ACTIVE')->get();
+       $data['slider_data'] = Schema::hasTable('sliders') ? AdminRecycleBinService::activeTable('sliders')->where('is_active', 'ACTIVE')->get() : collect([]);
         
-       $data['banner_data'] = AdminRecycleBinService::activeTable('offerbanners')->orderby('offerbanners_id', 'asc')->get();
+       $data['banner_data'] = Schema::hasTable('offerbanners') ? AdminRecycleBinService::activeTable('offerbanners')->orderby('offerbanners_id', 'asc')->get() : collect([]);
         
-      $data['featured_products'] = Product::leftJoin('product_quantity', function ($join) {
-                $join->on('product_quantity.product_quantity_id', '=', DB::raw('(SELECT product_quantity_id FROM product_quantity WHERE product_quantity.product_id = products.product_id LIMIT 1)'));})
-            ->where('products.is_active','ACTIVE')
+      $data['featured_products'] = $this->homepageProductQuery()
             ->where('products.featured_product','YES')
             ->orderBy('products.product_id', 'ASC')->take(12)->get();
        
         
-        $data['new_arrivals'] = Product::leftJoin('product_quantity', function ($join) {
-                $join->on('product_quantity.product_quantity_id', '=', DB::raw('(SELECT product_quantity_id FROM product_quantity WHERE product_quantity.product_id = products.product_id LIMIT 1)'));})
-            ->where('products.is_active','ACTIVE')
+        $data['new_arrivals'] = $this->homepageProductQuery()
             ->where('products.new_arrivals','YES')
             ->orderBy('products.product_id', 'ASC')
             ->take(12)->get();
         
        /*return  $data['new_arrivals'] ;*/
         
-        $data['view_flash_data'] = DB::table('flash_sale')
-            ->join('products', 'products.product_id', '=', 'flash_sale.product_id')
-            ->whereNull('products.deleted_at')
-            ->where('flash_sale.flash_active', 'ACTIVE')
-            ->get();
+        $data['view_flash_data'] = collect([]);
+        if (Schema::hasTable('flash_sale') && Schema::hasTable('products')) {
+            $flashQuery = DB::table('flash_sale')
+                ->join('products', 'products.product_id', '=', 'flash_sale.product_id')
+                ->where('flash_sale.flash_active', 'ACTIVE');
+            AdminRecycleBinService::withoutDeleted($flashQuery, 'products');
+            $data['view_flash_data'] = $flashQuery->get();
+        }
         
         foreach($data['view_flash_data'] as $dt)
         {
@@ -91,10 +91,9 @@ class HomeController extends Controller
             $currTime = date('H:i:s');
 
 
-            $data['flashSalesData'] = Product::leftJoin('product_quantity', function ($join) {
-                $join->on('product_quantity.product_quantity_id', '=', DB::raw('(SELECT product_quantity_id FROM product_quantity WHERE product_quantity.product_id = products.product_id LIMIT 1)'));})
-            ->where('products.is_active','ACTIVE')
-            ->where('products.product_id',$productId)->get();
+            $data['flashSalesData'] = $this->homepageProductQuery()
+                ->where('products.product_id',$productId)
+                ->get();
            
             if($currdate >= $end_date && $currTime > $end_time)
             {
@@ -122,12 +121,14 @@ class HomeController extends Controller
              {
                 $p_dt = json_decode($dt->dollar_prize);
              }
-            foreach($p_dt as $dassa)
-            {
-                $pros = explode(',',$dassa);
-                break;
+            if (is_array($p_dt) || is_object($p_dt)) {
+                foreach($p_dt as $dassa)
+                {
+                    $pros = explode(',',$dassa);
+                    break;
+                }
             }
-            $amt = $pros[1];
+            $amt = isset($pros[1]) ? $pros[1] : 0;
         }
         
         
@@ -136,11 +137,10 @@ class HomeController extends Controller
         
         
       
-        $data['flash_sales_data'] = DB::table('flash_banner')->where('flash_banner_id', 1)->orderby('flash_banner_id', 'asc')->get();
+        $data['flash_sales_data'] = Schema::hasTable('flash_banner') ? DB::table('flash_banner')->where('flash_banner_id', 1)->orderby('flash_banner_id', 'asc')->get() : collect([]);
         
-        $data['customer_data'] = DB::table('customer_shirt')->where('customer_shirt_id', 1)->get();
-        $testimonialQuery = AdminRecycleBinService::activeTable('testimonial')->orderBy('testimonial_id', 'desc');
-        $data['testimonials'] = $testimonialQuery->take(12)->get();
+        $data['customer_data'] = Schema::hasTable('customer_shirt') ? DB::table('customer_shirt')->where('customer_shirt_id', 1)->get() : collect([]);
+        $data['testimonials'] = Schema::hasTable('testimonial') ? AdminRecycleBinService::activeTable('testimonial')->orderBy('testimonial_id', 'desc')->take(12)->get() : collect([]);
         
         
             return view('front.index',compact('is_flash','count_down','amt'), $data);
@@ -163,6 +163,68 @@ class HomeController extends Controller
             $amt = 0;
             return view('front.index', compact('is_flash','count_down','amt'), $data);
         }
+    }
+
+    private function homepageProductQuery()
+    {
+        if (!Schema::hasTable('products')) {
+            throw new \RuntimeException('Products table is missing.');
+        }
+
+        $query = DB::table('products');
+        AdminRecycleBinService::withoutDeleted($query, 'products');
+
+        if (
+            Schema::hasTable('product_quantity')
+            && Schema::hasColumn('product_quantity', 'product_quantity_id')
+            && Schema::hasColumn('product_quantity', 'product_id')
+        ) {
+            $query->leftJoin('product_quantity as homepage_product_quantity', function ($join) {
+                $join->on(
+                    'homepage_product_quantity.product_quantity_id',
+                    '=',
+                    DB::raw('(SELECT MIN(pq.product_quantity_id) FROM product_quantity pq WHERE pq.product_id = products.product_id)')
+                );
+            });
+        }
+
+        return $query
+            ->select($this->homepageProductColumns())
+            ->where('products.is_active', 'ACTIVE');
+    }
+
+    private function homepageProductColumns()
+    {
+        $columns = ['products.*'];
+        $quantityColumns = [
+            'product_quantity_id',
+            'product_quantity',
+            'rupee_price',
+            'dollar_price',
+            'euro_price',
+            'product_discount',
+            'rupee_net_amount',
+            'dollar_net_amount',
+            'euro_net_amount',
+            'rupee_net_with_gst',
+            'dollar_net_with_gst',
+            'euro_net_with_gst',
+        ];
+
+        foreach ($quantityColumns as $column) {
+            if (
+                Schema::hasTable('product_quantity')
+                && Schema::hasColumn('product_quantity', 'product_quantity_id')
+                && Schema::hasColumn('product_quantity', 'product_id')
+                && Schema::hasColumn('product_quantity', $column)
+            ) {
+                $columns[] = 'homepage_product_quantity.' . $column . ' as ' . $column;
+            } else {
+                $columns[] = DB::raw('NULL as ' . $column);
+            }
+        }
+
+        return $columns;
     }
     
     

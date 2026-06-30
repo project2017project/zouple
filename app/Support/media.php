@@ -20,11 +20,16 @@ if (!function_exists('z_media_url')) {
         }
 
         $value = ltrim(str_replace('\\', '/', $value), '/');
+        $value = preg_replace('#^(public/)?uploads/#', '', $value);
         $value = preg_replace('#^(public/)?upload/#', '', $value);
         $folder = trim((string) $folder, '/');
 
         if ($folder && strpos($value, $folder . '/') !== 0) {
             $value = $folder . '/' . $value;
+        }
+
+        if (file_exists(public_path('uploads/' . $value))) {
+            return asset('uploads/' . $value);
         }
 
         if (!file_exists(public_path('upload/' . $value))) {
@@ -71,6 +76,7 @@ if (!function_exists('z_media_exists')) {
         }
 
         $value = ltrim(str_replace('\\', '/', $value), '/');
+        $value = preg_replace('#^(public/)?uploads/#', '', $value);
         $value = preg_replace('#^(public/)?upload/#', '', $value);
         $folder = trim((string) $folder, '/');
 
@@ -78,6 +84,6 @@ if (!function_exists('z_media_exists')) {
             $value = $folder . '/' . $value;
         }
 
-        return file_exists(public_path('upload/' . $value));
+        return file_exists(public_path('uploads/' . $value)) || file_exists(public_path('upload/' . $value));
     }
 }

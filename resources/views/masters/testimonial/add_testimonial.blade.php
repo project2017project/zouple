@@ -57,6 +57,15 @@
                                     <input class="form-control" type="file" name="image" accept="image/png,image/gif,image/jpeg,image/webp" autofocus required>
                                 </div>
                             </div>
+
+                            {{-- Platform logo upload: optional source logo shown beside frontend stars. --}}
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label"> Platform Logo <small class="text-muted">(optional)</small></label>
+                                    <input class="form-control" type="file" name="platform_logo" accept="image/png,image/jpeg,image/svg+xml,image/webp">
+                                    <small class="text-muted">Upload JPG, PNG, SVG, or WebP up to 4 MB.</small>
+                                </div>
+                            </div>
                             
                             
                             

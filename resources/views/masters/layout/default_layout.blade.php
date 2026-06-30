@@ -167,6 +167,116 @@
         return false;
       }
 
+      function adminUploadErrorBox(form) {
+        var existing = form.querySelector('.js-admin-upload-error');
+        if (existing) {
+          return existing;
+        }
+
+        var box = document.createElement('div');
+        box.className = 'alert alert-danger js-admin-upload-error d-none';
+
+        var firstFormRow = form.querySelector('.row, .form-group');
+        if (firstFormRow && firstFormRow.parentNode) {
+          firstFormRow.parentNode.insertBefore(box, firstFormRow);
+        } else {
+          form.insertBefore(box, form.firstChild);
+        }
+
+        return box;
+      }
+
+      function setAdminUploadError(form, message) {
+        var box = adminUploadErrorBox(form);
+        box.textContent = message || 'Upload failed. Please check the selected file and try again.';
+        box.classList.remove('d-none');
+      }
+
+      function clearAdminUploadError(form) {
+        var box = form.querySelector('.js-admin-upload-error');
+        if (box) {
+          box.textContent = '';
+          box.classList.add('d-none');
+        }
+      }
+
+      function adminFileExtension(file) {
+        return file && file.name && file.name.indexOf('.') !== -1
+          ? file.name.split('.').pop().toLowerCase()
+          : '';
+      }
+
+      function adminValidateSelectedFiles(form) {
+        var inputs = form.querySelectorAll('input[type="file"]');
+        var imageExts = ['jpeg', 'jpg', 'png', 'gif', 'webp'];
+        var logoExts = ['jpeg', 'jpg', 'png', 'svg', 'webp'];
+        var videoExts = ['mp4', 'mov', 'avi', 'wmv', 'webm'];
+
+        for (var i = 0; i < inputs.length; i++) {
+          var input = inputs[i];
+          if (!input.files || !input.files.length) {
+            continue;
+          }
+
+          for (var j = 0; j < input.files.length; j++) {
+            var file = input.files[j];
+            var ext = adminFileExtension(file);
+            var name = input.getAttribute('name') || 'file';
+
+            if (name === 'platform_logo') {
+              if (logoExts.indexOf(ext) === -1 || file.size > 4 * 1024 * 1024) {
+                return 'Platform Logo must be JPG, PNG, SVG, or WebP and 4 MB or smaller.';
+              }
+              continue;
+            }
+
+            if (name === 'video') {
+              if (videoExts.indexOf(ext) === -1 || file.size > 100 * 1024 * 1024) {
+                return 'Video must be MP4, MOV, AVI, WMV, or WebM and 100 MB or smaller.';
+              }
+              continue;
+            }
+
+            if (imageExts.indexOf(ext) !== -1 && file.size > 4 * 1024 * 1024) {
+              return 'Image files must be 4 MB or smaller.';
+            }
+          }
+        }
+
+        return '';
+      }
+
+      function adminExtractUploadError(xhr) {
+        var fallback = 'The server returned an error. Please check the selected file and try again.';
+
+        try {
+          var data = JSON.parse(xhr.responseText || '{}');
+          if (data.errors) {
+            var messages = [];
+            Object.keys(data.errors).forEach(function (key) {
+              if (data.errors[key] && data.errors[key].length) {
+                messages.push(data.errors[key][0]);
+              }
+            });
+
+            if (messages.length) {
+              return messages.join(' ');
+            }
+          }
+
+          if (data.message) {
+            return data.message;
+          }
+        } catch (ignore) {}
+
+        var match = (xhr.responseText || '').match(/<li>(.*?)<\/li>/i);
+        if (match && match[1]) {
+          return match[1].replace(/<[^>]+>/g, '');
+        }
+
+        return fallback;
+      }
+
       function adminUploadProgressBox(form) {
         var box = form.querySelector('.admin-upload-progress');
         if (box) {
@@ -209,7 +319,15 @@
           return;
         }
 
+        var validationMessage = adminValidateSelectedFiles(form);
+        if (validationMessage) {
+          event.preventDefault();
+          setAdminUploadError(form, validationMessage);
+          return;
+        }
+
         event.preventDefault();
+        clearAdminUploadError(form);
 
         if (window.CKEDITOR) {
           Object.keys(CKEDITOR.instances).forEach(function (key) {
@@ -253,11 +371,14 @@
             return;
           }
 
-          setAdminUploadProgress(box, 100, 'Upload failed.', 'The server returned an error. Please check the message on this page and try again.');
+          var errorMessage = adminExtractUploadError(xhr);
+          setAdminUploadError(form, errorMessage);
+          setAdminUploadProgress(box, 100, 'Upload failed.', errorMessage);
         });
 
         xhr.addEventListener('error', function () {
           submitButtons.prop('disabled', false);
+          setAdminUploadError(form, 'Network error. Please try again.');
           setAdminUploadProgress(box, 100, 'Upload failed.', 'Network error. Please try again.');
         });
 
