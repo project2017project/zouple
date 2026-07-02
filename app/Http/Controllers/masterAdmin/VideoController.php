@@ -120,6 +120,16 @@ class VideoController extends Controller
     {
       try {
           $this->ensureVideoRow(2);
+          if (!$request->request->has('remove_video')) {
+              $this->validate($request, [
+                  'title' => 'required|string|max:255',
+                  'description' => 'required|string|max:10000',
+              ], [
+                  'title.required' => 'Sub video title is required.',
+                  'description.required' => 'Sub video description is required.',
+              ]);
+          }
+
           $file = $this->safeVideoFile($request);
           if ($file && !$this->isValidVideoFile($file)) {
               $request->session()->flash('alert-danger', 'Please upload a valid MP4, MOV, AVI, WMV, or WebM video up to 100 MB.');
@@ -154,8 +164,10 @@ class VideoController extends Controller
               }
               else
               {
-                  $request->session()->flash('alert-info', $this->missingVideoMessage($request, $currentVideo, 'sub'));
-                  return Redirect::route('subVideoUpdate');
+                  if (!$currentVideo) {
+                      $request->session()->flash('alert-info', $this->missingVideoMessage($request, $currentVideo, 'sub'));
+                      return Redirect::route('subVideoUpdate');
+                  }
               }
           }
           

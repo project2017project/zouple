@@ -54,7 +54,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label class="control-label"> Testimonial Image <span class="text-danger"> <b> * </b></span> <!-- <span class="text-danger">(Image Dimensions - 1920*700 Pixel *)</span> --></label>
-                                    <input class="form-control" type="file" name="image" accept="image/png,image/gif,image/jpeg,image/webp" autofocus required>
+                                    <input class="form-control" type="file" name="image" accept="image/png,image/gif,image/jpeg,image/webp,image/bmp" autofocus required>
                                 </div>
                             </div>
 

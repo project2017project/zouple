@@ -208,7 +208,7 @@
 
       function adminValidateSelectedFiles(form) {
         var inputs = form.querySelectorAll('input[type="file"]');
-        var imageExts = ['jpeg', 'jpg', 'png', 'gif', 'webp'];
+        var imageExts = ['jpeg', 'jpg', 'png', 'gif', 'webp', 'bmp'];
         var logoExts = ['jpeg', 'jpg', 'png', 'svg', 'webp'];
         var videoExts = ['mp4', 'mov', 'avi', 'wmv', 'webm'];
 
@@ -232,14 +232,14 @@
 
             if (name === 'product_header_image' || name === 'product_images[]') {
               if (imageExts.indexOf(ext) === -1 || file.size > 120 * 1024 * 1024) {
-                return 'Product images must be JPG, PNG, GIF, or WebP and 120 MB or smaller.';
+                return 'Product images must be JPG, PNG, GIF, WebP, or BMP and 120 MB or smaller.';
               }
               continue;
             }
 
             if (name === 'image' && form.action && form.action.indexOf('testimonial') !== -1) {
               if (imageExts.indexOf(ext) === -1 || file.size > 10 * 1024 * 1024) {
-                return 'Testimonial image must be JPG, PNG, GIF, or WebP and 10 MB or smaller.';
+                return 'Testimonial image must be JPG, PNG, GIF, WebP, or BMP and 10 MB or smaller.';
               }
               continue;
             }

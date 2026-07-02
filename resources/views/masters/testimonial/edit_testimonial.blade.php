@@ -69,7 +69,7 @@
                                             <small class="text-muted">(optional)</small>
                                         @endif
                                     </label>
-                                    <input class="form-control" type="file" name="image" accept="image/png,image/gif,image/jpeg,image/webp" @if(!$hasTestimonialImage) required @endif>
+                                    <input class="form-control" type="file" name="image" accept="image/png,image/gif,image/jpeg,image/webp,image/bmp" @if(!$hasTestimonialImage) required @endif>
                                 </div>
                             </div>
 

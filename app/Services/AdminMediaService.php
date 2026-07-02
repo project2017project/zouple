@@ -103,8 +103,8 @@ class AdminMediaService
             $maxBytes = 100 * 1024 * 1024;
             $label = 'MP4, MOV, AVI, WMV, or WebM video up to 100 MB';
         } else {
-            $allowedExtensions = ['jpeg', 'jpg', 'png', 'gif', 'webp'];
-            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $allowedExtensions = ['jpeg', 'jpg', 'png', 'gif', 'webp', 'bmp'];
+            $allowedMimes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/x-ms-bmp'];
             $isProductUpload = strpos(trim((string) $folder, '/'), 'products/') === 0;
             $maxMb = $isProductUpload ? 120 : 10;
             $maxBytes = $maxMb * 1024 * 1024;

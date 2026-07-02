@@ -68,14 +68,14 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="control-label"> Title <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" name="title" value="{{$data->title}}">
+                                <input class="form-control" type="text" name="title" value="{{$data->title}}" required>
                             </div>
                         </div>
 
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label class="control-label"> Description <span class="text-danger">*</span></label>
-                                <textarea id="summary-ckeditor" name="description" class="form-control"><?php echo $data->description; ?></textarea>
+                                <textarea id="summary-ckeditor" name="description" class="form-control" required><?php echo $data->description; ?></textarea>
                             </div>
                         </div>
 
