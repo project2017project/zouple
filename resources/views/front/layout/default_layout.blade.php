@@ -95,7 +95,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260628-fix2" rel="stylesheet">
+    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260702-mobile1" rel="stylesheet">
     
     <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
     <!--===============================================================================================-->
@@ -658,6 +658,31 @@
         document.getElementById("loaderdiv").style.display = "none";
         document.getElementById("myDiv").style.display = "block";
     }
+
+    (function () {
+        function revealSite() {
+            var loader = document.getElementById("loaderdiv");
+            var page = document.getElementById("myDiv");
+
+            if (loader) {
+                loader.style.display = "none";
+            }
+
+            if (page) {
+                page.style.display = "block";
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function () {
+                setTimeout(revealSite, 800);
+            });
+        } else {
+            setTimeout(revealSite, 800);
+        }
+
+        setTimeout(revealSite, 3500);
+    })();
 
     function showPageAlertBox()
     {
