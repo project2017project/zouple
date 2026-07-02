@@ -30,6 +30,9 @@ use App\Imports\UsersImport;
 
 class ProductController extends Controller
 {
+    const PRODUCT_IMAGE_MAX_KB = 122880;
+    const PRODUCT_IMAGE_MAX_MB = 120;
+
    /* Prodcut */
     
     public function product_create(Request $request)
@@ -58,9 +61,9 @@ class ProductController extends Controller
             'product_sku' => 'required|max:255|unique:products,product_sku',
             'product_title' => 'required|max:255|unique:products,product_title',
             'product_gst' => 'required|numeric|min:0',
-            'product_header_image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:4096',
+            'product_header_image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:' . self::PRODUCT_IMAGE_MAX_KB,
             'product_images' => 'required|array|min:1',
-            'product_images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:4096',
+            'product_images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:' . self::PRODUCT_IMAGE_MAX_KB,
             'amazon_link' => 'nullable|url|max:500',
         ], $this->productImageValidationMessages());
 
@@ -359,9 +362,9 @@ class ProductController extends Controller
             'product_sku' => 'required|max:255|unique:products,product_sku,' . $request->product_id . ',product_id',
             'product_title' => 'required|max:255',
             'product_gst' => 'required|numeric|min:0',
-            'product_header_image' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:4096',
+            'product_header_image' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:' . self::PRODUCT_IMAGE_MAX_KB,
             'product_images' => 'nullable|array',
-            'product_images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:4096',
+            'product_images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:' . self::PRODUCT_IMAGE_MAX_KB,
             'remove_gallery_images' => 'nullable|array',
             'remove_gallery_images.*' => 'string|max:500',
             'replace_gallery_images' => 'nullable|in:1',
@@ -773,13 +776,13 @@ class ProductController extends Controller
             'product_header_image.required' => 'Please upload a product header image.',
             'product_header_image.image' => 'The product header file must be a valid image.',
             'product_header_image.mimes' => 'Please upload JPG, PNG, GIF, or WebP image only for the product header.',
-            'product_header_image.max' => 'The product header image must be 4 MB or smaller.',
+            'product_header_image.max' => 'The product header image must be ' . self::PRODUCT_IMAGE_MAX_MB . ' MB or smaller.',
             'product_images.required' => 'Please upload at least one product gallery image.',
             'product_images.array' => 'Please upload product gallery images correctly.',
             'product_images.min' => 'Please upload at least one product gallery image.',
             'product_images.*.image' => 'Every product gallery file must be a valid image.',
             'product_images.*.mimes' => 'Product gallery images must be JPG, PNG, GIF, or WebP only.',
-            'product_images.*.max' => 'Each product gallery image must be 4 MB or smaller.',
+            'product_images.*.max' => 'Each product gallery image must be ' . self::PRODUCT_IMAGE_MAX_MB . ' MB or smaller.',
         ];
     }
 

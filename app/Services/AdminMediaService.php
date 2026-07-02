@@ -56,7 +56,7 @@ class AdminMediaService
 
     protected function upload($file, $folder, $localFolder, $resourceType)
     {
-        $this->validateUpload($file, $resourceType);
+        $this->validateUpload($file, $resourceType, $folder);
 
         if ($this->cloudinary->isConfigured()) {
             $result = $resourceType === 'video'
@@ -88,7 +88,7 @@ class AdminMediaService
         throw new \RuntimeException('Cloudinary is not configured or the SDK is not installed. New uploads are not saved locally.');
     }
 
-    protected function validateUpload($file, $resourceType)
+    protected function validateUpload($file, $resourceType, $folder = '')
     {
         if (!$file instanceof UploadedFile && !$file instanceof SymfonyUploadedFile) {
             return;
@@ -105,8 +105,10 @@ class AdminMediaService
         } else {
             $allowedExtensions = ['jpeg', 'jpg', 'png', 'gif', 'webp'];
             $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            $maxBytes = 4 * 1024 * 1024;
-            $label = 'JPEG, PNG, GIF, or WebP image up to 4 MB';
+            $isProductUpload = strpos(trim((string) $folder, '/'), 'products/') === 0;
+            $maxMb = $isProductUpload ? 120 : 10;
+            $maxBytes = $maxMb * 1024 * 1024;
+            $label = 'JPEG, PNG, GIF, or WebP image up to ' . $maxMb . ' MB';
         }
 
         if (!$file->isValid() || $file->getSize() > $maxBytes || (!in_array($extension, $allowedExtensions, true) && !in_array($mime, $allowedMimes, true))) {

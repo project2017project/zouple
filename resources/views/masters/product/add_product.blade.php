@@ -208,12 +208,14 @@
                             <div class="form-group">
                                 <label class="control-label"> Product Header Image<span class="text-danger"><b> (184*245 Pixel *)</b></span></label>
                                 <input type="file" name="product_header_image" id="pincode" class="form-control" required accept="image/png,image/gif,image/jpeg,image/webp">
+                                <small class="text-muted">Upload JPG, PNG, GIF, or WebP up to 120 MB.</small>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="control-label"> Product Images <span class="text-danger"><b> (Multiple Iamge - 720*900 Pixel *)</b></span></label>
                                 <input type="file" name="product_images[]" class="form-control" required accept="image/png,image/gif,image/jpeg,image/webp" multiple>
+                                <small class="text-muted">Each image can be up to 120 MB.</small>
                             </div>
                         </div>
                     </div>

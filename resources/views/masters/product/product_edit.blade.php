@@ -279,6 +279,7 @@
                             <div class="form-group">
                                 <label class="control-label"> Product Header Image<span class="text-danger"><b> (184*245 Pixel *)</b></span></label>
                                 <input type="file" name="product_header_image" id="product_header_image_input" class="form-control product-header-input" accept="image/png,image/gif,image/jpeg,image/webp">
+                                <small class="text-muted d-block mt-1">Upload JPG, PNG, GIF, or WebP up to 120 MB.</small>
 
                                 <input type="hidden" name="product_header_image_old" value="{{$product_update->product_header_image}}">
                                 @php
@@ -300,6 +301,7 @@
                             <div class="form-group">
                                 <label class="control-label"> Product Images <span class="text-danger"><b> (Multiple Iamge - 400*400 Pixel *)</b></span></label>
                                 <input type="file" name="product_images[]" id="product_gallery_input" class="form-control product-gallery-input" accept="image/png,image/gif,image/jpeg,image/webp" multiple>
+                                <small class="text-muted d-block mt-1">Each gallery image can be up to 120 MB.</small>
 
                                 <input type="hidden" name="product_images_old" value="{{$product_update->product_images}}">
                                 <label class="admin-product-replace-gallery mt-2">

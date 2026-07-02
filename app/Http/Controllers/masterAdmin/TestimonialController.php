@@ -7,13 +7,18 @@ use App\Http\Controllers\Controller;
 
 use Auth,Redirect,View,File,Config,Image;
 use Validator;
-use DB; 
+use DB;
+use Schema;
+use Log;
 use App\Services\AdminRecycleBinService;
 use App\Services\AdminMediaService;
 use App\Services\CloudinaryService;
 
 class TestimonialController extends Controller
 {
+    const TESTIMONIAL_IMAGE_MAX_KB = 10240;
+    const TESTIMONIAL_IMAGE_MAX_MB = 10;
+
     public function testimonialList(Request $request)
     {
         $users['testimonial_data'] = DB::table('testimonial')->whereNull('deleted_at')->orderBy('testimonial_id', 'asc')->get();
@@ -33,16 +38,16 @@ class TestimonialController extends Controller
       $this->validate($request, [
           'name' => 'required|string|max:255',
           'heading' => 'required|string|max:500',
-          'description' => 'required|string|max:2000',
-          'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:4096',
-          'platform_logo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp|max:4096',
+          'description' => 'required|string|max:10000',
+          'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:' . self::TESTIMONIAL_IMAGE_MAX_KB,
+          'platform_logo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp|max:' . self::TESTIMONIAL_IMAGE_MAX_KB,
       ], [
           'image.required' => 'Please upload a testimonial image.',
           'image.image' => 'The testimonial file must be a valid image.',
           'image.mimes' => 'Please upload JPG, PNG, GIF, or WebP image only.',
-          'image.max' => 'The testimonial image must be 4 MB or smaller.',
+          'image.max' => 'The testimonial image must be ' . self::TESTIMONIAL_IMAGE_MAX_MB . ' MB or smaller.',
           'platform_logo.mimes' => 'Please upload a JPG, PNG, SVG, or WebP platform logo only.',
-          'platform_logo.max' => 'The platform logo must be 4 MB or smaller.',
+          'platform_logo.max' => 'The platform logo must be ' . self::TESTIMONIAL_IMAGE_MAX_MB . ' MB or smaller.',
       ]);
 
       $input = $this->safeInput($request);
@@ -57,6 +62,7 @@ class TestimonialController extends Controller
           try {
               $input['image'] = $this->storeTestimonialImage($request->file('image'));
           } catch (\Exception $e) {
+              Log::error('Testimonial image upload failed.', ['message' => $e->getMessage()]);
               $request->session()->flash('alert-danger','The image could not be saved. Please check the file and try again.');
               return Redirect::back()->withInput();
           }
@@ -73,11 +79,21 @@ class TestimonialController extends Controller
           try {
               $input['platform_logo'] = $this->storePlatformLogo($request->file('platform_logo'));
           } catch (\Exception $e) {
+              Log::error('Testimonial platform logo upload failed.', ['message' => $e->getMessage()]);
               $this->deleteTestimonialImage($input['image']);
-              $request->session()->flash('alert-danger','The platform logo could not be saved. Please upload JPG, PNG, SVG, or WebP up to 4 MB.');
+              $request->session()->flash('alert-danger','The platform logo could not be saved. Please upload JPG, PNG, SVG, or WebP up to ' . self::TESTIMONIAL_IMAGE_MAX_MB . ' MB.');
               return Redirect::back()->withInput();
           }
       }
+
+      if (!Schema::hasColumn('testimonial', 'platform_logo') && !empty($input['platform_logo'])) {
+          $this->deleteTestimonialImage($input['image']);
+          $this->deletePlatformLogo($input['platform_logo']);
+          $request->session()->flash('alert-danger','Platform logo database column is missing. Run migrations on Hostinger, then try again.');
+          return Redirect::back()->withInput();
+      }
+
+      $input = $this->onlyExistingColumns('testimonial', $input);
 
       try {
           DB::table('testimonial')->insert($input);
@@ -86,6 +102,7 @@ class TestimonialController extends Controller
           if (!empty($input['platform_logo'])) {
               $this->deletePlatformLogo($input['platform_logo']);
           }
+          Log::error('Testimonial save failed.', ['message' => $e->getMessage(), 'input_keys' => array_keys($input)]);
           $request->session()->flash('alert-danger','The testimonial could not be saved. Please try again.');
           return Redirect::back()->withInput();
       }
@@ -114,17 +131,17 @@ class TestimonialController extends Controller
           'testimonial_id' => 'required|integer',
           'name' => 'required|string|max:255',
           'heading' => 'required|string|max:500',
-          'description' => 'required|string|max:2000',
-          'image' => ($needsImage ? 'required' : 'nullable') . '|image|mimes:jpeg,jpg,png,gif,webp|max:4096',
-          'platform_logo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp|max:4096',
+          'description' => 'required|string|max:10000',
+          'image' => ($needsImage ? 'required' : 'nullable') . '|image|mimes:jpeg,jpg,png,gif,webp|max:' . self::TESTIMONIAL_IMAGE_MAX_KB,
+          'platform_logo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp|max:' . self::TESTIMONIAL_IMAGE_MAX_KB,
           'remove_platform_logo' => 'nullable|in:1',
       ], [
           'image.required' => 'Please upload a testimonial image because this testimonial does not have a saved image.',
           'image.image' => 'The testimonial file must be a valid image.',
           'image.mimes' => 'Please upload JPG, PNG, GIF, or WebP image only.',
-          'image.max' => 'The testimonial image must be 4 MB or smaller.',
+          'image.max' => 'The testimonial image must be ' . self::TESTIMONIAL_IMAGE_MAX_MB . ' MB or smaller.',
           'platform_logo.mimes' => 'Please upload a JPG, PNG, SVG, or WebP platform logo only.',
-          'platform_logo.max' => 'The platform logo must be 4 MB or smaller.',
+          'platform_logo.max' => 'The platform logo must be ' . self::TESTIMONIAL_IMAGE_MAX_MB . ' MB or smaller.',
       ]);
 
       $input = $this->safeInput($request);
@@ -139,6 +156,7 @@ class TestimonialController extends Controller
           try {
               $input['image'] = $this->storeTestimonialImage($request->file('image'));
           } catch (\Exception $e) {
+              Log::error('Testimonial image update upload failed.', ['testimonial_id' => $testimonial_id, 'message' => $e->getMessage()]);
               $request->session()->flash('alert-danger','The image could not be saved. Please check the file and try again.');
               return Redirect::back()->withInput();
           }
@@ -159,10 +177,20 @@ class TestimonialController extends Controller
           try {
               $input['platform_logo'] = $this->storePlatformLogo($request->file('platform_logo'));
           } catch (\Exception $e) {
+              Log::error('Testimonial platform logo update upload failed.', ['testimonial_id' => $testimonial_id, 'message' => $e->getMessage()]);
               if (!empty($input['image'])) {
                   $this->deleteTestimonialImage($input['image']);
               }
-              $request->session()->flash('alert-danger','The platform logo could not be saved. Please upload JPG, PNG, SVG, or WebP up to 4 MB.');
+              $request->session()->flash('alert-danger','The platform logo could not be saved. Please upload JPG, PNG, SVG, or WebP up to ' . self::TESTIMONIAL_IMAGE_MAX_MB . ' MB.');
+              return Redirect::back()->withInput();
+          }
+
+          if (!Schema::hasColumn('testimonial', 'platform_logo')) {
+              if (!empty($input['image'])) {
+                  $this->deleteTestimonialImage($input['image']);
+              }
+              $this->deletePlatformLogo($input['platform_logo']);
+              $request->session()->flash('alert-danger','Platform logo database column is missing. Run migrations on Hostinger, then try again.');
               return Redirect::back()->withInput();
           }
 
@@ -181,6 +209,8 @@ class TestimonialController extends Controller
       {
           unset($input['platform_logo']);
       }
+
+      $input = $this->onlyExistingColumns('testimonial', $input);
       
       try {
           DB::table('testimonial')->where('testimonial_id','=',$testimonial_id)->update($input);
@@ -191,6 +221,7 @@ class TestimonialController extends Controller
           if (!empty($input['platform_logo'])) {
               $this->deletePlatformLogo($input['platform_logo']);
           }
+          Log::error('Testimonial update failed.', ['testimonial_id' => $testimonial_id, 'message' => $e->getMessage()]);
           $request->session()->flash('alert-danger','The testimonial could not be updated. Please try again.');
           return Redirect::back()->withInput();
       }
@@ -226,6 +257,16 @@ class TestimonialController extends Controller
       unset($input['testimonial_id']);
 
       return $input;
+  }
+
+  private function onlyExistingColumns($table, array $input)
+  {
+      if (!Schema::hasTable($table)) {
+          return $input;
+      }
+
+      $columns = Schema::getColumnListing($table);
+      return array_intersect_key($input, array_flip($columns));
   }
 
   private function makeImageName($filename)

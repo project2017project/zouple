@@ -224,8 +224,22 @@
             var name = input.getAttribute('name') || 'file';
 
             if (name === 'platform_logo') {
-              if (logoExts.indexOf(ext) === -1 || file.size > 4 * 1024 * 1024) {
-                return 'Platform Logo must be JPG, PNG, SVG, or WebP and 4 MB or smaller.';
+              if (logoExts.indexOf(ext) === -1 || file.size > 10 * 1024 * 1024) {
+                return 'Platform Logo must be JPG, PNG, SVG, or WebP and 10 MB or smaller.';
+              }
+              continue;
+            }
+
+            if (name === 'product_header_image' || name === 'product_images[]') {
+              if (imageExts.indexOf(ext) === -1 || file.size > 120 * 1024 * 1024) {
+                return 'Product images must be JPG, PNG, GIF, or WebP and 120 MB or smaller.';
+              }
+              continue;
+            }
+
+            if (name === 'image' && form.action && form.action.indexOf('testimonial') !== -1) {
+              if (imageExts.indexOf(ext) === -1 || file.size > 10 * 1024 * 1024) {
+                return 'Testimonial image must be JPG, PNG, GIF, or WebP and 10 MB or smaller.';
               }
               continue;
             }
@@ -237,8 +251,8 @@
               continue;
             }
 
-            if (imageExts.indexOf(ext) !== -1 && file.size > 4 * 1024 * 1024) {
-              return 'Image files must be 4 MB or smaller.';
+            if (imageExts.indexOf(ext) !== -1 && file.size > 10 * 1024 * 1024) {
+              return 'Image files must be 10 MB or smaller.';
             }
           }
         }
