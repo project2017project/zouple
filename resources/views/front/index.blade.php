@@ -369,23 +369,32 @@ for (var i = 0, l = videos.length; i < l; i++) {
     <!--====================   video blog ====================-->
 @php
     $subVideo = null;
+    $subVideoUrl = '';
     if(isset($main_video)) {
         foreach($main_video as $sv) {
             if($sv->video_id == 2) { $subVideo = $sv; break; }
         }
     }
+    if ($subVideo && !empty($subVideo->video) && strtolower(trim((string) $subVideo->video)) !== 'null') {
+        $subVideoUrl = z_media_url($subVideo->video, 'video', '');
+    }
 @endphp
-@if($subVideo && !empty($subVideo->video))
+@if($subVideo && $subVideoUrl)
 <div class="container-fluid pb-5">
     <div class="row">
         <div class="col-12 p-0 videoBlog position-relative">
-            <video autoplay muted loop id="myVideo2">
-                <source src="{{ z_media_url($subVideo->video, 'video') }}" type="video/mp4" width="100%" height="400px">
+            <video autoplay muted loop playsinline preload="auto" id="myVideo2">
+                <source src="{{ $subVideoUrl }}">
+                Your browser does not support the video tag.
             </video>
             <div class="videoHover d-flex maxWidhtContainer">
                 <div class="align-self-center text-white">
+                    @if(!empty($subVideo->title))
                     <div class="h3 m-0 text-center">{{$subVideo->title}}</div>
-                    <div class="h5 m-0 text-center"><?php echo $subVideo->description; ?></div>
+                    @endif
+                    @if(!empty($subVideo->description))
+                    <div class="h5 m-0 text-center">{!! $subVideo->description !!}</div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -480,18 +489,18 @@ for (var i = 0, l = videos.length; i < l; i++) {
     }
     .review-platform-logo {
         display: block;
-        max-height: 22px;
+        max-height: 28px;
         width: auto;
-        max-width: 64px;
+        max-width: 96px;
         object-fit: contain;
     }
     .review-platform-logo-wrap {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 34px;
-        height: 28px;
-        padding: 4px 7px;
+        min-width: 42px;
+        height: 34px;
+        padding: 4px 8px;
         border: 1px solid rgba(198,168,103,0.24);
         border-radius: 999px;
         background: rgba(255,255,255,0.06);
@@ -572,7 +581,6 @@ for (var i = 0, l = videos.length; i < l; i++) {
                 $testimonialImage = trim((string) $t->image);
                 $hasTestimonialImage = z_media_exists($testimonialImage, 'testimonial');
                 $platformLogo = isset($t->platform_logo) ? trim((string) $t->platform_logo) : '';
-                $hasPlatformLogo = z_media_exists($platformLogo, 'testimonial-logos');
                 $reviewText = html_entity_decode(strip_tags((string) $t->description), ENT_QUOTES, 'UTF-8');
                 $reviewText = trim(preg_replace('/\s+/u', ' ', str_replace("\xc2\xa0", ' ', $reviewText)));
             @endphp
@@ -582,7 +590,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
                     {{-- Optional platform logo replaces the old stray symbol beside the rating. --}}
                     <div class="review-rating-row">
                         <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        @if($hasPlatformLogo)
+                        @if($platformLogo !== '')
                             <span class="review-platform-logo-wrap">
                                 <img src="{{ z_media_url($platformLogo, 'testimonial-logos') }}" class="review-platform-logo" alt="Review platform logo" loading="lazy" decoding="async" onerror="this.parentNode.style.display='none';">
                             </span>

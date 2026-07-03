@@ -59,7 +59,13 @@
     }
 
     function prepareReveal() {
-        if (prefersReducedMotion) {
+        if (prefersReducedMotion || window.innerWidth < 992) {
+            document.querySelectorAll('[data-aos]').forEach(function (element) {
+                element.removeAttribute('data-aos');
+                element.removeAttribute('data-aos-duration');
+                element.removeAttribute('data-aos-once');
+                element.removeAttribute('data-aos-offset');
+            });
             return;
         }
 
@@ -91,7 +97,7 @@
                 once: true,
                 offset: 40,
                 disable: function () {
-                    return window.innerWidth < 576;
+                    return window.innerWidth < 992;
                 }
             });
         }

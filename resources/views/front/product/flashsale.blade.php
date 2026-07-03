@@ -935,8 +935,8 @@
                         </div>
 
                         <div class="form-group rvw">
-                            <label for="comment" class="h6 text-white">Review:</label>
-                            <textarea class="form-control h6 rounded-0" rows="5" id="comment" style="resize:none;" name="review" required></textarea>
+                            <label for="flash_review_comment" class="h6 text-white">Review:</label>
+                            <textarea class="form-control h6 rounded-0" rows="5" id="flash_review_comment" style="resize:none;" name="review" required></textarea>
                         </div>
                         <button type="submit" class="cta border-0 ">
                             <span class="text-white">Submit</span>
@@ -984,8 +984,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="comment" class="h6 text-white">Query</label>
-                            <textarea class="form-control h6 rounded-0" rows="5" id="comment" style="resize:none;" name="message" required></textarea>
+                            <label for="flash_notify_query" class="h6 text-white">Query</label>
+                            <textarea class="form-control h6 rounded-0" rows="5" id="flash_notify_query" style="resize:none;" name="message" required></textarea>
                         </div>
                         <button type="submit" class="cta border-0 ">
                             <span class="text-white">Send</span>
