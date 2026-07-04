@@ -516,6 +516,110 @@ textarea:focus {
     }
 }
 
+/* Mobile/tablet rescue: keep the existing desktop design, but prevent the
+   homepage hero from using desktop video height and oversized overlay text. */
+@media (max-width: 991.98px) {
+    :root {
+        --zl-front-header-offset: 96px;
+    }
+
+    #myDiv > .sliderWrapper:first-of-type,
+    .sliderWrapper {
+        margin-top: var(--zl-front-header-offset) !important;
+    }
+
+    .sliderWrapper,
+    .slidehover {
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    #myVideo {
+        display: block !important;
+        height: clamp(250px, 58vw, 420px) !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        object-fit: cover !important;
+        width: 100% !important;
+    }
+
+    .slideHoverContent {
+        left: 0 !important;
+        max-width: 100% !important;
+        padding: 0 18px !important;
+        top: 52% !important;
+        transform: translateY(-50%) !important;
+        width: 100% !important;
+    }
+
+    .slideHoverContent .h1 {
+        font-size: clamp(24px, 8vw, 42px) !important;
+        line-height: 1.05 !important;
+        overflow-wrap: anywhere;
+    }
+
+    .slideHoverContent .h4 {
+        font-size: clamp(13px, 4vw, 18px) !important;
+        line-height: 1.35 !important;
+        margin-top: 8px !important;
+    }
+
+    .viewBtn2 {
+        margin-top: 14px !important;
+    }
+
+    .viewBtn2 a {
+        display: inline-flex !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+        padding: 9px 18px !important;
+    }
+
+    .headpadding {
+        padding-bottom: 22px !important;
+        padding-top: 34px !important;
+    }
+
+    .zouple-trust-strip {
+        padding: 12px 0 !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    :root {
+        --zl-front-header-offset: 86px;
+    }
+
+    .fixedTopMenu {
+        min-height: 82px !important;
+    }
+
+    .fixedTopMenu .container-fluid {
+        padding: 6px 8px 8px !important;
+    }
+
+    .fixedTopMenu .logoContent img {
+        width: 78px !important;
+    }
+
+    .fixedTopMenu .btnSm {
+        min-width: 32px !important;
+        padding: 4px 3px !important;
+    }
+
+    .fixedTopMenu .btnSm i {
+        font-size: 14px !important;
+    }
+
+    .fixedTopMenu .btnSm span {
+        font-size: 9px !important;
+    }
+
+    #myVideo {
+        height: 300px !important;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;

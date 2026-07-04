@@ -95,7 +95,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260704-testimonial-logo1" rel="stylesheet">
+    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260704-mobile-hero1" rel="stylesheet">
     
     <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
     <!--===============================================================================================-->
@@ -323,8 +323,8 @@
                                     <form action="{{url('userlogin')}}" class="log_fm" method="post">
                                         @csrf
                                         <div class="form-group pt-2 col-md-12">
-                                            <label for="email">Email:</label>
-                                            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+                                            <label for="login_email">Email:</label>
+                                            <input type="email" class="form-control" id="login_email" placeholder="Enter email" name="email" required>
                                         </div>
                                         <div class="form-group pt-2 m-0 col-md-12">
                                             <label for="login_pwd">Password:</label>
@@ -350,8 +350,8 @@
                                     <form action="{{url('forgotpassword')}}" method="post" class="forgot">
                                         @csrf
                                         <div class="form-group pt-2 col-md-12">
-                                            <label for="email">Email:</label>
-                                            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+                                            <label for="forgot_email">Email:</label>
+                                            <input type="email" class="form-control" id="forgot_email" placeholder="Enter email" name="email" required>
 
                                         </div>
                                         <div class="h6 m-0 text-right p-2 text-secondary logIN">Log in</div>
@@ -379,8 +379,8 @@
                                         </div>
                                         <div class="row">
                                             <div class="form-group pt-2 col-md-12">
-                                                <label for="email">Email:</label>
-                                                <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" required>
+                                                <label for="signup_email">Email:</label>
+                                                <input type="email" class="form-control" id="signup_email" placeholder="Enter Email" name="email" required>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -401,8 +401,8 @@
 
                                         <div class="row">
                                             <div class="form-group pt-2 col-md-12">
-                                                <label for="email">Contact Number:</label>
-                                                <input type="number" class="form-control" id="email" placeholder="Enter Contact Number" name="contact" required>
+                                                <label for="signup_contact">Contact Number:</label>
+                                                <input type="number" class="form-control" id="signup_contact" placeholder="Enter Contact Number" name="contact" required>
                                                 <p class="trm_condi pt-3">By creating this account, you agree to our <a href="{{url('cms/terms-of-use')}}">Terms & Conditions </a>&<a href="{{url('/cms/private-policy')}}"> Privacy Policy</a> .</p>
                                             </div>
                                         </div>

@@ -1275,8 +1275,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="comment" class="h6 text-white">Review:</label>
-                                    <textarea class="form-control h6 rounded-0" rows="5" id="comment" style="resize:none;" name="description" required></textarea>
+                                    <label for="review_comment" class="h6 text-white">Review:</label>
+                                    <textarea class="form-control h6 rounded-0" rows="5" id="review_comment" style="resize:none;" name="description" required></textarea>
                                 </div>
                                 <button type="submit" class="cta border-0 ">
                                     <span class="text-white">Submit</span>
@@ -1324,8 +1324,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="comment" class="h6 text-white">Query</label>
-                                    <textarea class="form-control h6 rounded-0" rows="5" id="comment" style="resize:none;" name="message" required></textarea>
+                                    <label for="notify_query" class="h6 text-white">Query</label>
+                                    <textarea class="form-control h6 rounded-0" rows="5" id="notify_query" style="resize:none;" name="message" required></textarea>
                                 </div>
                                 <button type="submit" class="cta border-0 ">
                                     <span class="text-white">Send</span>
