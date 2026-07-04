@@ -95,7 +95,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260702-mobile1" rel="stylesheet">
+    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260704-testimonial-logo1" rel="stylesheet">
     
     <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
     <!--===============================================================================================-->

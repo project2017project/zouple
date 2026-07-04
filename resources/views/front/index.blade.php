@@ -469,7 +469,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
         display: flex;
         align-items: center;
         gap: 10px;
-        min-height: 24px;
+        min-height: 34px;
         margin-bottom: 14px;
         position: relative;
         z-index: 1;
@@ -480,18 +480,18 @@ for (var i = 0, l = videos.length; i < l; i++) {
     }
     .review-platform-logo {
         display: block;
-        max-height: 22px;
+        max-height: 28px;
         width: auto;
-        max-width: 64px;
+        max-width: 96px;
         object-fit: contain;
     }
     .review-platform-logo-wrap {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 34px;
-        height: 28px;
-        padding: 4px 7px;
+        min-width: 42px;
+        height: 34px;
+        padding: 4px 8px;
         border: 1px solid rgba(198,168,103,0.24);
         border-radius: 999px;
         background: rgba(255,255,255,0.06);
@@ -572,7 +572,6 @@ for (var i = 0, l = videos.length; i < l; i++) {
                 $testimonialImage = trim((string) $t->image);
                 $hasTestimonialImage = z_media_exists($testimonialImage, 'testimonial');
                 $platformLogo = isset($t->platform_logo) ? trim((string) $t->platform_logo) : '';
-                $hasPlatformLogo = z_media_exists($platformLogo, 'testimonial-logos');
                 $reviewText = html_entity_decode(strip_tags((string) $t->description), ENT_QUOTES, 'UTF-8');
                 $reviewText = trim(preg_replace('/\s+/u', ' ', str_replace("\xc2\xa0", ' ', $reviewText)));
             @endphp
@@ -582,7 +581,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
                     {{-- Optional platform logo replaces the old stray symbol beside the rating. --}}
                     <div class="review-rating-row">
                         <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        @if($hasPlatformLogo)
+                        @if($platformLogo !== '')
                             <span class="review-platform-logo-wrap">
                                 <img src="{{ z_media_url($platformLogo, 'testimonial-logos') }}" class="review-platform-logo" alt="Review platform logo" loading="lazy" decoding="async" onerror="this.parentNode.style.display='none';">
                             </span>

@@ -37,7 +37,6 @@
                         $testimonialImage = trim((string) $data->image);
                         $hasTestimonialImage = z_media_exists($testimonialImage, 'testimonial');
                         $platformLogo = isset($data->platform_logo) ? trim((string) $data->platform_logo) : '';
-                        $hasPlatformLogo = z_media_exists($platformLogo, 'testimonial-logos');
                     @endphp
                     <form action="{{route('testimonialEdit_save')}}" method="post" enctype="multipart/form-data">
                       @csrf
@@ -93,7 +92,7 @@
                             </div>
 
                             <div class="col-sm-6 pb-4">
-                                @if($hasPlatformLogo)
+                                @if($platformLogo !== '')
                                     <img src="{{ z_media_url($platformLogo, 'testimonial-logos') }}" class="admin-platform-logo-thumb" alt="Platform logo for {{ $data->name }}" onerror="this.style.display='none';">
                                     <label class="d-block mt-2 mb-0">
                                         <input type="checkbox" name="remove_platform_logo" value="1">
