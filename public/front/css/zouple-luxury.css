@@ -357,11 +357,21 @@ textarea:focus {
 
 @media (max-width: 767.98px) {
     :root {
-        --zl-front-header-offset: 108px;
+        --zl-front-header-offset: 118px;
     }
 
     html {
         scroll-padding-top: 82px;
+    }
+
+    body {
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    #myDiv {
+        overflow-x: hidden !important;
+        padding-top: 0 !important;
     }
 
     .zouple-back-to-top {
@@ -376,7 +386,8 @@ textarea:focus {
     }
 
     .fixedTopMenu {
-        min-height: 96px;
+        min-height: 96px !important;
+        overflow: visible !important;
     }
 
     .fixedTopMenu .container-fluid {
@@ -420,6 +431,7 @@ textarea:focus {
     .fixedTopMenu .logoContent img {
         height: auto;
         max-width: 30vw;
+        max-height: 74px !important;
         width: 86px !important;
     }
 
@@ -490,13 +502,60 @@ textarea:focus {
         margin-top: var(--zl-front-header-offset) !important;
     }
 
+    .maxWidhtContainer,
+    .maxWidthContainer,
     .container,
     .container-fluid {
-        max-width: 100%;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        width: 100% !important;
     }
 
     .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        min-width: 0 !important;
+    }
+
+    [class*="col-"] {
         min-width: 0;
+    }
+
+    .review-slide-card {
+        min-height: 300px !important;
+        transform: none !important;
+        width: 100% !important;
+    }
+
+    .review-text {
+        min-height: auto !important;
+        -webkit-line-clamp: 5;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .zouple-reveal,
+    [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        visibility: visible !important;
+    }
+
+    .owl-carousel,
+    .owl-carousel .owl-wrapper-outer,
+    .owl-carousel .owl-item,
+    .owl-carousel .item {
+        max-width: 100vw !important;
+    }
+
+    .meunTab,
+    .userTab,
+    .searchContent {
+        left: 0 !important;
+        max-width: 100vw !important;
+        right: 0 !important;
+        width: 100vw !important;
     }
 }
 

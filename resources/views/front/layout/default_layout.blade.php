@@ -95,7 +95,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260704-testimonial-logo1" rel="stylesheet">
+    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260704-mobile-fix1" rel="stylesheet">
     
     <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
     <!--===============================================================================================-->
@@ -595,9 +595,9 @@
 <script src="{{URL::asset('public/front/js/owl.carousel.min.js')}}"></script>
 <script src="{{URL::asset('public/front/js/custom-owl.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script src="{{URL::asset('public/front/js/index.js')}}"></script>
+<script src="{{URL::asset('public/front/js/index.js')}}?v=20260704-mobile-fix1"></script>
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script src="{{URL::asset('public/front/js/zouple-luxury.js')}}"></script>
+<script src="{{URL::asset('public/front/js/zouple-luxury.js')}}?v=20260704-mobile-fix1"></script>
 
 
 <script type="text/javascript" src="{{URL::asset('public/front/vendor/sweetalert/sweetalert.min.js')}}"></script>

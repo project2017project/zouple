@@ -92,7 +92,14 @@ if (document.getElementsByClassName("tab").length) showTab(currentTab);
     }
 
     function initReveal() {
-        if (reduceMotion || typeof window.AOS === "undefined") {
+        if (reduceMotion || typeof window.AOS === "undefined" || window.innerWidth < 992) {
+            Array.prototype.forEach.call(document.querySelectorAll(".zouple-reveal, [data-aos]"), function (element) {
+                element.classList.remove("zouple-reveal");
+                element.removeAttribute("data-aos");
+                element.removeAttribute("data-aos-duration");
+                element.removeAttribute("data-aos-offset");
+                element.removeAttribute("data-aos-once");
+            });
             return;
         }
 
@@ -130,7 +137,7 @@ if (document.getElementsByClassName("tab").length) showTab(currentTab);
             easing: "ease-out-cubic",
             offset: 60,
             disable: function () {
-                return window.innerWidth < 576 || reduceMotion;
+                return window.innerWidth < 992 || reduceMotion;
             }
         });
     }
