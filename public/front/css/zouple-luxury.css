@@ -38,25 +38,6 @@ iframe {
     max-width: 100%;
 }
 
-#myVideo2 {
-    display: block;
-    height: clamp(260px, 48vw, 560px);
-    object-fit: cover;
-    width: 100%;
-}
-
-#myVideo2::-webkit-media-controls,
-#myVideo2::-webkit-media-controls-panel,
-#myVideo2::-webkit-media-controls-start-playback-button {
-    display: none !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-.videoBlog {
-    min-height: 260px;
-}
-
 #myDiv {
     width: 100%;
     overflow-x: hidden;
@@ -364,13 +345,13 @@ textarea:focus {
 
 /* Testimonial platform logo: optional source logo beside the gold stars. */
 .review-rating-row {
-    min-height: 34px;
+    min-height: 24px;
 }
 
 .review-platform-logo {
-    max-height: 28px;
+    max-height: 24px;
     width: auto;
-    max-width: 96px;
+    max-width: 92px;
     object-fit: contain;
 }
 
@@ -516,23 +497,6 @@ textarea:focus {
 
     .row {
         min-width: 0;
-    }
-
-    #myVideo2 {
-        height: 300px;
-    }
-
-    .videoHover {
-        pointer-events: none;
-    }
-}
-
-@media (max-width: 991.98px) {
-    .zouple-reveal,
-    [data-aos] {
-        opacity: 1 !important;
-        transform: none !important;
-        visibility: visible !important;
     }
 }
 
