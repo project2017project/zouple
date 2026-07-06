@@ -560,6 +560,72 @@ for (var i = 0, l = videos.length; i < l; i++) {
     .owl-dots .owl-dot.active span {
         background: #C6A867 !important;
     }
+    @media (max-width: 767.98px) {
+        #why-choose-zouple {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        #why-choose-zouple .maxWidhtContainer {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+        }
+        #why-choose-zouple .owl-carousel {
+            padding-bottom: 0 !important;
+        }
+        #why-choose-zouple .owl-carousel .item,
+        #why-choose-zouple .owl-item {
+            width: 100% !important;
+            min-width: 100% !important;
+            padding: 0 6px;
+            box-sizing: border-box;
+        }
+        #why-choose-zouple .review-slide-card {
+            min-height: auto !important;
+            margin: 8px 6px !important;
+            padding: 24px 18px 20px !important;
+        }
+        #why-choose-zouple .review-quote {
+            font-size: 48px !important;
+            top: 10px !important;
+            left: 16px !important;
+        }
+        #why-choose-zouple .review-rating-row {
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            margin-bottom: 10px !important;
+        }
+        #why-choose-zouple .review-platform-logo-wrap {
+            min-width: 0 !important;
+            width: auto !important;
+            padding: 3px 7px !important;
+        }
+        #why-choose-zouple .review-platform-logo {
+            max-height: 22px !important;
+            max-width: 72px !important;
+        }
+        #why-choose-zouple .review-text {
+            min-height: auto !important;
+            -webkit-line-clamp: 5 !important;
+            margin-bottom: 16px !important;
+        }
+        #why-choose-zouple .review-customer-row {
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+        }
+        #why-choose-zouple .review-avatar,
+        #why-choose-zouple .review-avatar-placeholder {
+            width: 44px !important;
+            height: 44px !important;
+            margin-right: 10px !important;
+        }
+        #why-choose-zouple .reviews-heading {
+            font-size: clamp(26px, 8vw, 34px) !important;
+            margin-bottom: 10px !important;
+        }
+        #why-choose-zouple .reviews-sub {
+            margin-bottom: 18px !important;
+        }
+    }
     </style>
     <div class="maxWidhtContainer">
         <div class="text-center mb-4">
@@ -583,11 +649,10 @@ for (var i = 0, l = videos.length; i < l; i++) {
                         <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                         @if($platformLogo !== '')
                             <span class="review-platform-logo-wrap">
-                                <img src="{{ z_media_url($platformLogo, 'testimonial-logos') }}" class="review-platform-logo" alt="Review platform logo" loading="lazy" decoding="async" onerror="this.parentNode.style.display='none';">
+                                <img src="{{ z_cloudinary_transform_url($platformLogo, 'testimonial-logos', null, 'f_auto,q_auto,w_96,c_limit') }}" class="review-platform-logo" alt="Review platform logo" loading="lazy" decoding="async" onerror="this.parentNode.style.display='none';">
                             </span>
                         @endif
                     </div>
-                    <div class="review-stars">★★★★★</div>
                     <div class="review-text">{{ $reviewText }}</div>
                     <div class="d-flex align-items-center review-customer-row">
                         @if($hasTestimonialImage)

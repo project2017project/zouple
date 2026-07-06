@@ -16,8 +16,8 @@ use App\Services\CloudinaryService;
 
 class TestimonialController extends Controller
 {
-    const TESTIMONIAL_IMAGE_MAX_KB = 10240;
-    const TESTIMONIAL_IMAGE_MAX_MB = 10;
+    const TESTIMONIAL_IMAGE_MAX_KB = 51200;
+    const TESTIMONIAL_IMAGE_MAX_MB = 50;
 
     public function testimonialList(Request $request)
     {

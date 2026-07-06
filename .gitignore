@@ -21,3 +21,5 @@ yarn-error.log
 /storage/framework/sessions/*
 /storage/framework/views/*
 /bootstrap/cache/*
+
+/.mysql-data/

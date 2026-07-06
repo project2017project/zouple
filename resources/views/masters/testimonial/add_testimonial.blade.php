@@ -63,7 +63,7 @@
                                 <div class="form-group">
                                     <label class="control-label"> Platform Logo <small class="text-muted">(optional)</small></label>
                                     <input class="form-control" type="file" name="platform_logo" accept="image/png,image/jpeg,image/svg+xml,image/webp">
-                                    <small class="text-muted">Upload JPG, PNG, SVG, or WebP up to 10 MB.</small>
+                                    <small class="text-muted">Upload JPG, PNG, SVG, or WebP up to 50 MB.</small>
                                 </div>
                             </div>
                             

@@ -63,6 +63,24 @@ if (!function_exists('z_optimized_media_url')) {
     }
 }
 
+if (!function_exists('z_cloudinary_transform_url')) {
+    function z_cloudinary_transform_url($value, $folder = null, $placeholder = null, $transformation = 'f_auto,q_auto')
+    {
+        $url = z_media_url($value, $folder, $placeholder);
+        $transformation = trim((string) $transformation, '/');
+
+        if ($transformation === '' || !is_string($url) || !preg_match('#^https?://res\.cloudinary\.com/.+/image/upload/#i', $url)) {
+            return $url;
+        }
+
+        if (strpos($url, '/image/upload/' . $transformation . '/') !== false) {
+            return $url;
+        }
+
+        return preg_replace('#/image/upload/#', '/image/upload/' . $transformation . '/', $url, 1);
+    }
+}
+
 if (!function_exists('z_media_exists')) {
     function z_media_exists($value, $folder = null)
     {

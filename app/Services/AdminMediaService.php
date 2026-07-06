@@ -105,8 +105,10 @@ class AdminMediaService
         } else {
             $allowedExtensions = ['jpeg', 'jpg', 'png', 'gif', 'webp', 'bmp'];
             $allowedMimes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/x-ms-bmp'];
-            $isProductUpload = strpos(trim((string) $folder, '/'), 'products/') === 0;
-            $maxMb = $isProductUpload ? 120 : 10;
+            $folderName = trim((string) $folder, '/');
+            $isProductUpload = strpos($folderName, 'products/') === 0;
+            $isTestimonialUpload = in_array($folderName, ['testimonials', 'testimonial-logos'], true);
+            $maxMb = $isProductUpload ? 120 : ($isTestimonialUpload ? 50 : 10);
             $maxBytes = $maxMb * 1024 * 1024;
             $label = 'JPEG, PNG, GIF, or WebP image up to ' . $maxMb . ' MB';
         }

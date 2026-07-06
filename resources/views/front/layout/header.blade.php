@@ -45,7 +45,7 @@
 
 <header class="fixed-top fixedTopMenu text-white">
 
-    <div class="container-fluid px-5  py-2 pb-3">
+    <div class="container-fluid px-2 px-md-5 py-2 pb-3">
         <div class="row maxWidhtContainer">
             <div class="col-2 menuContent col-md-4 d-flex">
                 <div class="align-self-center  text-center btn btnSm menuBtn" style="line-height: 10px;">
