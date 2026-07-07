@@ -95,7 +95,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260706-mobile-visible2" rel="stylesheet">
+    <link href="{{URL::asset('public/front/css/zouple-luxury.css')}}?v=20260704-mobile-hero1" rel="stylesheet">
     
     <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
     <!--===============================================================================================-->
@@ -107,13 +107,15 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149857508-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-    
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
-    <!--===============================================================================================-->
-    <script src="{{URL::asset('public/front/js/magiczoom.js')}}"></script>
 
-    <!-- For Seo -->
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
 
+        gtag('config', 'UA-149857508-1');
+
+    </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149857508-1"></script>
     <script>
@@ -249,7 +251,7 @@
 
 </head>
 
-<body class="{{ request()->is('/') ? 'zouple-home-page' : 'zouple-inner-page' }}" onload="myFunction()" style="margin:0;">
+<body onload="myFunction()" style="margin:0;">
 
 
 
@@ -401,6 +403,200 @@
                                             <div class="form-group pt-2 col-md-12">
                                                 <label for="signup_contact">Contact Number:</label>
                                                 <input type="number" class="form-control" id="signup_contact" placeholder="Enter Contact Number" name="contact" required>
+                                                <p class="trm_condi pt-3">By creating this account, you agree to our <a href="{{url('cms/terms-of-use')}}">Terms & Conditions </a>&<a href="{{url('/cms/private-policy')}}"> Privacy Policy</a> .</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pt-1 col-md-12 p-0">
+                                            <button type="submit" class="cta border-0">
+                                                <span>Signup</span>
+                                                <svg width="13px" height="10px" viewBox="0 0 13 10">
+                                                    <path d="M1,5 L11,5"></path>
+                                                    <polyline points="8 1 12 5 8 9"></polyline>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!------------------------------- User Logi Code End ------------------------------->
+
+        <!-- Waiting Loader -->
+        <div id="wait" class="text-center">
+            <img src="{{URL::asset('public/img/loader.gif')}}" width="25%">
+        </div>
+
+
+        <footer class="zouple-luxury-footer" itemscope itemtype="https://schema.org/Organization">
+
+            <div class="container-fluid zouple-footer-brand">
+                <div class="row maxWidhtContainer align-items-center py-4">
+                    <div class="col-md-4 py-2">
+                        <a href="{{url('/')}}" aria-label="Zouple home" itemprop="url">
+                            <img src="{{URL::asset('public/img/dark-logo.png')}}" alt="Zouple premium signage" width="140" itemprop="logo">
+                        </a>
+                    </div>
+                    <div class="col-md-8 py-2">
+                        <h2 class="m-0" itemprop="name">Zouple</h2>
+                        <p class="zouple-footer-tagline m-0">Precision-Crafted Premium Signage for Modern Homes, Offices & Commercial Spaces.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="zouple-footer-newsletter">
+                <div class="container-fluid">
+                    <div class="row maxWidhtContainer">
+                        <div class="col-md-6 py-4">
+                            <div class="h5 m-0 text-white subscribe">SUBSCRIBE FOR NEWSLETTER</div>
+                        </div>
+
+                        <div class="col-md-6 subscribeForm py-3 align-self-center">
+                            <form method="post" action="{{url('newsubscribe_save')}}">
+                                @csrf
+                                <div class="input-group subscribe">
+                                    <input type="email" name="email" required class="form-control text-white border-right-0" style="border-top-right-radius: 0px!important; border-bottom-right-radius: 0px!important;">
+                                    <input type="submit">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="container-fluid text-white zouple-footer-links">
+                <div class="row py-2 maxWidhtContainer">
+                    <div class="col-sm-6 col-md-3 col-6 py-3 quickLinks">
+                        <ul class="list-unstyled">
+                            <h5 class="m-0 pb-2  footer_head" >My Account</h5>
+                            @if(isset(Auth::user()->id))
+                            <li class="pl-3 pt-2"><a href="{{url('yourOrder')}}" class="text-white">My Order</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('returnOrder')}}" class="text-white">Return Order</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('dashboard')}}" class="text-white">Change Password</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('wishlist')}}" class="text-white">My Wishlist</a></li>
+                            @else
+
+                            <li class="pl-3 pt-2"><a href="" data-target="#logSign" data-toggle="modal" class="text-white">My Order</a></li>
+                            <li class="pl-3 pt-2"><a href="" data-target="#logSign" data-toggle="modal" class="text-white">Return Order</a></li>
+                            <li class="pl-3 pt-2"><a href="" data-target="#logSign" data-toggle="modal" class="text-white">Change Password</a></li>
+                            <li class="pl-3 pt-2"><a href="" data-target="#logSign" data-toggle="modal" class="text-white">My Wishlist</a></li>
+
+                            @endif
+
+
+                        </ul>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-6 py-3 quickLinks">
+                        <ul class="list-unstyled">
+                            <h5 class="m-0 pb-2  footer_head">Quick Links</h5>
+                            <li class="pl-3 pt-2"><a href="{{url('/')}}" class="text-white">Home</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('about')}}" class="text-white">About Us</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('blog')}}" class="text-white">Blogs</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('contact')}}" class="text-white">Contact Us</a></li>
+
+                        </ul>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-6 py-3 quickLinks">
+                        <ul class="list-unstyled">
+                            <h5 class="m-0 pb-2 footer_head">Policies</h5>
+                            <li class="pl-3 pt-2"><a href="{{url('cms','private-policy')}}" class="text-white">Privacy & Policy</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('cms','terms-of-use')}}" class="text-white">Terms & conditions</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('cms','delivery-shipping')}}" class="text-white">Shipping Policy</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('cms','return-policy')}}" class="text-white">Return Policy</a></li>
+                            <li class="pl-3 pt-2"><a href="{{url('cms','disclaimer')}}" class="text-white">Disclaimer</a></li>
+
+
+                        </ul>
+                    </div>
+                    <div class="col-sm-6 col-md-3 py-3 col-6 quickLinks">
+                        <ul class="list-unstyled">
+                            <h5 class="m-0 pb-2 footer_head">Follow Us</h5>
+                            @foreach(($siteinformation ?? []) as $contact)
+                            <li class=" pl-3 pt-2">
+                                <a href="{{$contact->facebook_url}}" target="_blank" class="text-white d-flex" aria-label="Zouple on Facebook">
+                                    <div style="width: 25px;"><i class="fa fa-facebook"></i></div>
+                                    <div>Facebook</div>
+                                </a>
+
+                            </li>
+                            <!--<li class=" pl-3 pt-2">
+                            <a href="{{$contact->twitter_url}}" target="_blank" class="text-white d-flex">
+                                <div style="width: 25px;"><i class="fa fa-twitter"></i></div>
+                                <div>Twitter</div>
+                            </a>
+
+                        </li>-->
+                            <li class=" pl-3 pt-2">
+                                <a href="{{$contact->instagram_url}}" target="_blank" class="text-white d-flex" aria-label="Zouple on Instagram">
+                                    <div style="width: 25px;"><i class="fa fa-instagram"></i></div>
+                                    <div>Instagram</div>
+                                </a>
+                            </li>
+                            <li class=" pl-3 pt-2">
+                                <a href="{{$contact->pinterest}}" target="_blank" class="text-white d-flex" aria-label="Zouple on Pinterest">
+                                    <div style="width: 25px;"><i class="fa fa-pinterest"></i></div>
+                                    <div>Pinterest</div>
+                                </a>
+                            </li>
+
+                            <li class=" pl-3 pt-2">
+                                <a href="{{$contact->youtube}}" target="_blank" class="text-white d-flex" aria-label="Zouple on YouTube">
+                                    <div style="width: 25px;"><i class="fa fa-youtube-play"></i></div>
+                                    <div>Youtube</div>
+                                </a>
+                            </li>
+
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid zouple-footer-trust">
+                <div class="row maxWidhtContainer">
+                    <div class="paymentThro col-md-6 py-3">
+                        <div class="h6 m-0 text-dark">WE DELIVER THROUGH</div>
+                        <div><img src="{{URL::asset('public/front/images/social1.png')}}"></div>
+                    </div>
+
+                    <div class="paymentThro col-md-6 paymentMadEasy py-3">
+                        <div class="h6 m-0 text-dark">PAYMENT MADE EASY THROUGH</div>
+                        <div><img src="{{URL::asset('public/front/images/social2.png')}}" width="70%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid zouple-footer-copy">
+                <div class="row maxWidhtContainer">
+                    <div class="col-12 text-center py-2 text-white">
+                        <i class="fa fa-copyright"></i> 2019 - 2026 zouple.in. All rights reserved
+
+                    </div>
+                </div>
+            </div>
+
+        </footer>
+
+    </div>
+
+</body>
+
+<!--======================  custom css =====================-->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script src="{{URL::asset('public/front/js/owl.carousel.min.js')}}"></script>
+<script src="{{URL::asset('public/front/js/custom-owl.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="{{URL::asset('public/front/js/index.js')}}"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script src="{{URL::asset('public/front/js/zouple-luxury.js')}}"></script>
 
 
