@@ -33,7 +33,7 @@ use PayPal\Api\RedirectUrls;
 use PayPal\Api\Transaction;
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
-
+use Razorpay\Api\Api;
 use URL;
 
 
@@ -546,7 +546,7 @@ class CheckoutController extends Controller
         $this->validate($request, [
             'billingAddress' => 'required',
             'shippingAddress' => 'required',
-            'payment_method' => 'required|in:paytm,paypal,cod',
+            'payment_method' => 'required|in:paytm,paypal,razorpay,cod',
             'total_amount' => 'required|numeric|min:0',
         ]);
         
@@ -733,6 +733,36 @@ class CheckoutController extends Controller
         {
             $request->session()->flash('alert-warning','PayPal is not configured yet. Your order is saved as payment pending.');
             return Redirect::to('yourOrder');
+        }
+
+        if ($request->payment_method == 'razorpay') {
+
+            $api = new Api(
+                config('razorpay.key'),
+                config('razorpay.secret')
+            );
+
+            $order = $api->order->create([
+                'receipt' => $order_number,
+                'amount' => $amount * 100,
+                'currency' => 'INR',
+                'payment_capture' => 1
+
+            ]);
+
+            DB::table('order_system')
+                ->where('order_number',$order_number)
+                ->update([
+                    'transaction_id'=>$order['id'],
+                    'payment_getway'=>'Razorpay'
+                ]);
+
+            return view('front.payment.razorpay',[
+                'order'=>$order,
+                'amount'=>$amount,
+                'order_number'=>$order_number,
+                'user'=>Auth::user()
+            ]);
         }
 
         if($request->payment_method === 'paytm')
@@ -1886,6 +1916,80 @@ class CheckoutController extends Controller
         
     }
 
+    public function razorpaySuccess(Request $request)
+{
+
+    $api = new Api(
+
+        config('razorpay.key'),
+
+        config('razorpay.secret')
+
+    );
+
+    try{
+
+        $attributes = [
+
+            'razorpay_order_id'=>$request->razorpay_order_id,
+
+            'razorpay_payment_id'=>$request->razorpay_payment_id,
+
+            'razorpay_signature'=>$request->razorpay_signature
+
+        ];
+
+        $api->utility->verifyPaymentSignature($attributes);
+
+        $order = DB::table('order_system')
+            ->where('transaction_id',$request->razorpay_order_id)
+            ->first();
+
+        if(!$order){
+
+            return response()->json([
+                'success'=>false
+            ],404);
+
+        }
+
+        DB::table('order_system')
+            ->where('id',$order->id)
+            ->update([
+
+                'transaction_id'=>$request->razorpay_payment_id,
+
+                'payment_status'=>'TXN_SUCCESS',
+
+                'payment_getway'=>'Razorpay',
+
+                'order_status'=>'Confirmed'
+
+            ]);
+
+        /*
+         * Copy the same inventory update,
+         * cart delete and mail code
+         * from paytmcallback()
+         * here.
+         */
+
+        return response()->json([
+            'success'=>true
+        ]);
+
+    }
+
+    catch(\Exception $e){
+
+        return response()->json([
+            'success'=>false,
+            'message'=>$e->getMessage()
+        ],400);
+
+    }
+
+}
     
     /* Paypal Return Status */
     public function getPaypalPaymentStatus(Request $request)

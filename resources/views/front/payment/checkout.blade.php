@@ -946,6 +946,16 @@
                                             <small>Secure online payment through Paytm gateway.</small>
                                         </span>
                                     </label>
+                                    <label>
+
+<input
+type="radio"
+name="payment_method"
+value="razorpay">
+
+Razorpay
+
+</label>
                                     <label class="payment-method-option">
                                         <input type="radio" name="payment_method" value="paypal" {{ ($currencySession ?? '') != 'rupee_price' ? 'checked' : '' }}>
                                         <span class="payment-method-copy">

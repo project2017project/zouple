@@ -258,7 +258,10 @@ Route::group([ 'middleware' => ['auth_front','web_mid']], function ()
     Route::get('processPaypal','CheckoutController@processPaypal')->name('process.paypal');
     Route::get('canclePaypal','CheckoutController@canclePaypal')->name('cancle.paypal');
     
-    
+    Route::post(
+    '/razorpay-success',
+    'CheckoutController@razorpaySuccess'
+)->name('razorpay.success');
     
     
     /* Check Out Code End */
