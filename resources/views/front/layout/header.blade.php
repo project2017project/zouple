@@ -130,7 +130,7 @@
                     <ul class="list-unstyled px-4 mainCat accordion m-0" id="accordion">
                         <li><a href="{{url('/')}}" class="text-white">HOME</a></li>
                         <li><a href="{{url('about')}}" class="text-white">ABOUT US</a></li>
-                        <li><a href="{{url('designShirt')}}" class="text-white">MEN`S SHIRT CUSTOMIZATION</a></li>
+                        <li><a href="{{url('designShirt')}}" class="text-white">CUSTOM ITEM</a></li>
                         @foreach($categories ?? [] as $category)
                         @if($category->is_active == "ACTIVE")
                         @if(count($category->childs))

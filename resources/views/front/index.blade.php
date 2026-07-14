@@ -124,7 +124,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
 
 </div>
 
-<section class="zouple-trust-strip">
+<!-- <section class="zouple-trust-strip">
     <div class="container-fluid">
         <div class="row maxWidhtContainer">
             <div class="col-6 col-md-3 zouple-trust-item">
@@ -157,7 +157,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
             </a>
         </div>
     </div>
-</section>
+</section> -->
 
 <section class="bg-white">
 

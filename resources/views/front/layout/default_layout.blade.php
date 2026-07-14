@@ -433,7 +433,7 @@
 
         <footer class="zouple-luxury-footer" itemscope itemtype="https://schema.org/Organization">
 
-            <div class="container-fluid zouple-footer-brand">
+            <!-- <div class="container-fluid zouple-footer-brand">
                 <div class="row maxWidhtContainer align-items-center py-4">
                     <div class="col-md-4 py-2">
                         <a href="{{url('/')}}" aria-label="Zouple home" itemprop="url">
@@ -445,7 +445,41 @@
                         <p class="zouple-footer-tagline m-0">Precision-Crafted Premium Signage for Modern Homes, Offices & Commercial Spaces.</p>
                     </div>
                 </div>
+            </div> -->
+            <section class="zouple-trust-strip">
+    <div class="container-fluid">
+        <div class="row maxWidhtContainer">
+            <div class="col-6 col-md-3 zouple-trust-item">
+                <span class="zouple-trust-icon"><i class="fa fa-truck"></i></span>
+                <span>
+                    <strong>Fast Dispatch</strong>
+                    <small>Reliable delivery support</small>
+                </span>
             </div>
+            <div class="col-6 col-md-3 zouple-trust-item">
+                <span class="zouple-trust-icon"><i class="fa fa-shield"></i></span>
+                <span>
+                    <strong>Secure Checkout</strong>
+                    <small>Protected payment journey</small>
+                </span>
+            </div>
+            <div class="col-6 col-md-3 zouple-trust-item">
+                <span class="zouple-trust-icon"><i class="fa fa-star"></i></span>
+                <span>
+                    <strong>Premium Quality</strong>
+                    <small>Designed for daily wear</small>
+                </span>
+            </div>
+            <a class="col-6 col-md-3 zouple-trust-item text-decoration-none" href="{{ $bulk_whatsapp_link ?? z_whatsapp_link('', 'Hello Zouple, I want to enquire about bulk order.') }}" target="_blank" rel="noopener" aria-label="Contact Zouple on WhatsApp for bulk enquiry">
+                <span class="zouple-trust-icon"><i class="fa fa-whatsapp"></i></span>
+                <span>
+                    <strong>Bulk Support</strong>
+                    <small>Quick WhatsApp enquiry</small>
+                </span>
+            </a>
+        </div>
+    </div>
+</section>
 
             <div class="zouple-footer-newsletter">
                 <div class="container-fluid">
