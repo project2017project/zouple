@@ -940,22 +940,13 @@
                                 <div class="payment-methods zouple-payment-methods">
                                     <div class="h6 mb-2">Payment Method</div>
                                     <label class="payment-method-option">
-                                        <input type="radio" name="payment_method" value="paytm" {{ ($currencySession ?? '') == 'rupee_price' ? 'checked' : '' }}>
+                                        <input type="radio" name="payment_method" value="razorpay" {{ ($currencySession ?? '') == 'rupee_price' ? 'checked' : '' }}>
                                         <span class="payment-method-copy">
                                             <strong>UPI / Card / Netbanking</strong>
                                             <small>Secure online payment through Paytm gateway.</small>
                                         </span>
                                     </label>
-                                    <label>
-
-<input
-type="radio"
-name="payment_method"
-value="razorpay">
-
-Razorpay
-
-</label>
+                                    
                                     <label class="payment-method-option">
                                         <input type="radio" name="payment_method" value="paypal" {{ ($currencySession ?? '') != 'rupee_price' ? 'checked' : '' }}>
                                         <span class="payment-method-copy">
