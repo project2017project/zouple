@@ -203,11 +203,11 @@
                     <ul class="list-unstyled px-4 mainCat">
                         <li><a href="{{url('dashboard')}}" class='text-white'><i class="fa fa-user"></i>MY PROFILE</a></li>
                         <li><a href="{{url('yourOrder')}}" class='text-white'><i class="fa fa-shopping-bag"></i>ORDERS</a></li>
-                        <li><a href="{{url('cancleOrder')}}" class='text-white'><i class="fa fa-times"></i>CANCEL ADDRESS</a></li>
+                        <li><a href="{{url('cancleOrder')}}" class='text-white'><i class="fa fa-times"></i>CANCEL ORDER</a></li>
                         <li><a href="{{url('returnOrder')}}" class='text-white'><i class="fa fa-retweet"></i>RETURN ORDERS</a></li>
                         <li><a href="{{url('wishlist')}}" class='text-white'><i class="fa fa-heart"></i>WISHLIST</a></li>
 
-                        <li><a href="{{url('shippingAddress')}}" class='text-white'><i class="fa fa-map-marker"></i>SHIPPING ORDERS</a></li>
+                        <li><a href="{{url('shippingAddress')}}" class='text-white'><i class="fa fa-map-marker"></i>SHIPPING ADDRESS</a></li>
                         <li><a href="{{url('billingAddress')}}" class='text-white'><i class="fa fa-map-marker"></i>BILLING ADDRESS</a></li>
 
                         <li><a href="{{url('logout')}}" class='text-white'><i class="fa fa-sign-out" aria-hidden="true"></i>LOG OUT</a></li>
