@@ -498,7 +498,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
         overflow: hidden;
     }
     .review-text {
-        color: rgba(255,255,255,0.82);
+        color: rgba(198,168,103,0.8);
         font-size: 0.97rem;
         line-height: 1.75;
         margin-bottom: 22px;
@@ -538,7 +538,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
     }
     .review-name {
         font-weight: 700;
-        color: #fff;
+        color: rgba(198,168,103,0.8);
         font-size: 1rem;
         line-height: 1.35;
         overflow-wrap: anywhere;
