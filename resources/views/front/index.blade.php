@@ -643,10 +643,16 @@ for (var i = 0, l = videos.length; i < l; i++) {
             @endphp
             <div class="item">
                 <div class="review-slide-card">
-                    <div class="review-quote">&ldquo;</div>
+                    <!-- <div class="review-quote">&ldquo;</div> -->
+                     
+
                     {{-- Optional platform logo replaces the old stray symbol beside the rating. --}}
                     <div class="review-rating-row">
+                        <div class="review-name">{{ $t->name }}</div>
                         <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        @if($t->heading)
+                            <div class="review-heading-tag">{{ $t->heading }}</div>
+                        @endif
                         @if($platformLogo !== '')
                             <span class="review-platform-logo-wrap">
                                 <img src="{{ z_cloudinary_transform_url($platformLogo, 'testimonial-logos', null, 'f_auto,q_auto,w_96,c_limit') }}" class="review-platform-logo" alt="Review platform logo" loading="lazy" decoding="async" onerror="this.parentNode.style.display='none';">
@@ -660,12 +666,12 @@ for (var i = 0, l = videos.length; i < l; i++) {
                         @else
                         <div class="review-avatar-placeholder">{{ strtoupper(substr($t->name, 0, 1)) }}</div>
                         @endif
-                        <div>
+                        <!-- <div>
                             <div class="review-name">{{ $t->name }}</div>
                             @if($t->heading)
                             <div class="review-heading-tag">{{ $t->heading }}</div>
                             @endif
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
