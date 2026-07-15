@@ -399,11 +399,11 @@ for (var i = 0, l = videos.length; i < l; i++) {
 @if(isset($testimonials) && !$testimonials->isEmpty())
 <div class="container-fluid py-5" id="why-choose-zouple">
     <style>
-    #why-choose-zouple {
+    /* #why-choose-zouple {
         background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
         position: relative;
         overflow: hidden;
-    }
+    } */
     #why-choose-zouple::before {
         content: '';
         position: absolute;
