@@ -130,14 +130,14 @@
 
         <li class="treeview {{ $isExpanded(['shirtCategory','shirtAttribut','attributValue','shirtSize','customerShirt']) }}">
             <a class="app-menu__item" href="#" data-toggle="treeview">
-                <i class="app-menu__icon fa fa-shield"></i><span class="app-menu__label">Shirt Design</span><i class="treeview-indicator fa fa-angle-right"></i>
+                <i class="app-menu__icon fa fa-shield"></i><span class="app-menu__label">Custom Item</span><i class="treeview-indicator fa fa-angle-right"></i>
             </a>
             <ul class="treeview-menu">
-                <li><a class="treeview-item {{ $isActive('shirtCategory') }}" href="{{ route('shirtCategory') }}"><i class="icon fa fa-circle-o"></i> Fabric</a></li>
-                <li><a class="treeview-item {{ $isActive('shirtAttribut') }}" href="{{ route('shirtAttribut') }}"><i class="icon fa fa-circle-o"></i> Elements</a></li>
-                <li><a class="treeview-item {{ $isActive('attributValue') }}" href="{{ route('attributValue') }}"><i class="icon fa fa-circle-o"></i> Element Values</a></li>
-                <li><a class="treeview-item {{ $isActive('shirtSize') }}" href="{{ route('shirtSize') }}"><i class="icon fa fa-circle-o"></i> Shirt Sizes</a></li>
-                <li><a class="treeview-item {{ $isActive('customerShirt') }}" href="{{ route('customerShirt') }}"><i class="icon fa fa-circle-o"></i> Home Customize Shirt</a></li>
+                <li><a class="treeview-item {{ $isActive('shirtCategory') }}" href="{{ route('shirtCategory') }}"><i class="icon fa fa-circle-o"></i> material</a></li>
+                <li><a class="treeview-item {{ $isActive('shirtAttribut') }}" href="{{ route('shirtAttribut') }}"><i class="icon fa fa-circle-o"></i> Pre Design</a></li>
+                <li><a class="treeview-item {{ $isActive('attributValue') }}" href="{{ route('attributValue') }}"><i class="icon fa fa-circle-o"></i>Size</a></li>
+                <li><a class="treeview-item {{ $isActive('shirtSize') }}" href="{{ route('shirtSize') }}"><i class="icon fa fa-circle-o"></i>Text</a></li>
+                <li><a class="treeview-item {{ $isActive('customerShirt') }}" href="{{ route('customerShirt') }}"><i class="icon fa fa-circle-o"></i> Home Customize Item</a></li>
             </ul>
         </li>
 
