@@ -648,10 +648,10 @@ for (var i = 0, l = videos.length; i < l; i++) {
 
                     {{-- Optional platform logo replaces the old stray symbol beside the rating. --}}
                     <div class="review-rating-row">
-                        <div class="review-name">{{ $t->name }}</div>
-                        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <span class="review-name">{{ $t->name }}</span>
+                        <span class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                         @if($t->heading)
-                            <div class="review-heading-tag">{{ $t->heading }}</div>
+                            <span class="review-heading-tag">{{ $t->heading }}</span>
                         @endif
                         @if($platformLogo !== '')
                             <span class="review-platform-logo-wrap">
@@ -662,7 +662,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
                     <div class="review-text">{{ $reviewText }}</div>
                     <div class="d-flex align-items-center review-customer-row">
                         @if($hasTestimonialImage)
-                        <img src="{{ z_media_url($testimonialImage, 'testimonial') }}" class="review-avatar" alt="{{$t->name}}">
+                        <img src="{{ z_media_url($testimonialImage, 'testimonial') }}" class="" alt="{{$t->name}}">
                         @else
                         <div class="review-avatar-placeholder">{{ strtoupper(substr($t->name, 0, 1)) }}</div>
                         @endif
