@@ -210,10 +210,10 @@ for (var i = 0, l = videos.length; i < l; i++) {
     <div class="container-fluid">
         @foreach($customer_data as $data)
         <div class="row pb-5 maxWidhtContainer ">
-            <div class="col-sm-5">
+            <!-- <div class="col-sm-5">
                 <img src="{{ z_media_url($data->image, 'customershirt') }}" width="100%">
-            </div>
-            <div class="col-sm-7 font-weight-normal text-justify m-sm-0 m-xs-3 " style="font-size=" 14px !important>
+            </div> -->
+            <div class="col-sm-12 font-weight-normal text-justify m-sm-0 m-xs-3 " style="font-size=" 14px !important>
                 <h6 style="font-size:18px !important" class="mt-sm-0 mt-3">{{$data->heading}}</h6>
                 <hr>
                 <div style="font-size:14px !important">
@@ -221,7 +221,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
                 </div>
 
 
-                <div class="col-12 text-center mt-3">
+                <!-- <div class="col-12 text-center mt-3">
                     <a href="{{url('designShirt')}}">
                         <button type="submit" class="cta border-0">
                             <span>Flat Number Sign</span>
@@ -232,7 +232,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
                         </button>
                     </a>
 
-                </div>
+                </div> -->
             </div>
         </div>
         @endforeach
