@@ -199,17 +199,16 @@ for (var i = 0, l = videos.length; i < l; i++) {
     <!--=====================   end category ================-->
 
     <!--=====================   about us =================-->
-    @foreach($customer_data as $data)
     <div class="container-fluid">
         <div class="row  maxWidhtContainer">
             <div class="col-12   text-center headpadding">
-                <div class="h5 m-0 font-weight-bold headStyle">{{$data->heading}}</div>
+                <div class="h5 m-0 font-weight-bold headStyle">Explore Customizable Products</div>
             </div>
 
         </div>
     </div>
     <div class="container-fluid">
-        <!-- @foreach($customer_data as $data) -->
+        @foreach($customer_data as $data)
         <div class="row pb-5 maxWidhtContainer ">
             <!-- <div class="col-sm-5">
                 <img src="{{ z_media_url($data->image, 'customershirt') }}" width="100%">
@@ -236,9 +235,9 @@ for (var i = 0, l = videos.length; i < l; i++) {
                 </div> -->
             </div>
         </div>
-        
+        @endforeach
     </div>
-     @endforeach
+
     <!--========================  end of about us ==============-->
 
     <!--====================  new arivals ====================-->
