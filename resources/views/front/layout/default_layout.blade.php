@@ -481,7 +481,7 @@
     </div>
 </section>
 
-            <div class="zouple-footer-newsletter">
+            <!-- <div class="zouple-footer-newsletter">
                 <div class="container-fluid">
                     <div class="row maxWidhtContainer">
                         <div class="col-md-6 py-4">
@@ -499,7 +499,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
 
             <div class="container-fluid text-white zouple-footer-links">
