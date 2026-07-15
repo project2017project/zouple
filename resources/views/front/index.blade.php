@@ -202,7 +202,7 @@ for (var i = 0, l = videos.length; i < l; i++) {
     <div class="container-fluid">
         <div class="row  maxWidhtContainer">
             <div class="col-12   text-center headpadding">
-                <div class="h5 m-0 font-weight-bold headStyle">Premium Home & Office Signage</div>
+                <div class="h5 m-0 font-weight-bold headStyle">{{$data->heading}}</div>
             </div>
 
         </div>
@@ -214,8 +214,8 @@ for (var i = 0, l = videos.length; i < l; i++) {
                 <img src="{{ z_media_url($data->image, 'customershirt') }}" width="100%">
             </div> -->
             <div class="col-sm-12 font-weight-normal text-justify m-sm-0 m-xs-3 " style="font-size=" 14px !important>
-                <h6 style="font-size:18px !important" class="mt-sm-0 mt-3">{{$data->heading}}</h6>
-                <hr>
+                <!-- <h6 style="font-size:18px !important" class="mt-sm-0 mt-3">{{$data->heading}}</h6> -->
+                <!-- <hr> -->
                 <div style="font-size:14px !important">
                     <?php echo $data->description;?>
                 </div>
