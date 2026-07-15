@@ -92,9 +92,9 @@
                                         <th>S.No</th>
                                         <th>Category</th>
                                         <th> SKU</th>
-                                        <th> Slug </th>
-                                        <th> Title </th>
-                                        <th> GST </th>
+                                        <!-- <th> Slug </th>
+                                        <th> Title </th> 
+                                        <th> GST </th>-->
                                         <th> Image </th>
                                         
                                         <th> Price</th>
@@ -128,9 +128,9 @@
                                         </td>
                                         <td><a href="{{route('productshowdetail',$pro_id)}}">{{$data->product_sku}}</a></td>
                                       
-                                        <td><a href="{{route('productshowdetail',$pro_id)}}">{{$data->slug}}</a></td>
+                                        <!-- <td><a href="{{route('productshowdetail',$pro_id)}}">{{$data->slug}}</a></td>
                                         <td><a href="{{route('productshowdetail',$data->product_id)}}">{{$data->product_title}}</a></td>
-                                        <td>{{$data->product_gst}}</td>
+                                        <td>{{$data->product_gst}}</td> -->
                                         
                                         @php
                                             $productHeaderImage = trim((string) $data->product_header_image);
