@@ -647,12 +647,13 @@ for (var i = 0, l = videos.length; i < l; i++) {
                      
 
                     {{-- Optional platform logo replaces the old stray symbol beside the rating. --}}
-                    <div class="review-rating-row">
-                        <span class="review-name">{{ $t->name }}</span>
+                    <span class="review-name">{{ $t->name }}</span>
                         <span class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                         @if($t->heading)
                             <span class="review-heading-tag">{{ $t->heading }}</span>
                         @endif
+                    <div class="review-rating-row">
+                        
                         @if($platformLogo !== '')
                             <span class="review-platform-logo-wrap">
                                 <img src="{{ z_cloudinary_transform_url($platformLogo, 'testimonial-logos', null, 'f_auto,q_auto,w_96,c_limit') }}" class="review-platform-logo" alt="Review platform logo" loading="lazy" decoding="async" onerror="this.parentNode.style.display='none';">
