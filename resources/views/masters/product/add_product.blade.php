@@ -347,13 +347,13 @@
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label class="control-label"> Product Description <span class="text-danger"> <b> * </b> </span></label>
+                                <label class="control-label"> Product Key Features <span class="text-danger"> <b> * </b> </span></label>
                                 <textarea id="summary-ckeditor1" name="product_description" class="form-control" required></textarea>
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label class="control-label"> Product Addition Information <span class="text-danger"> <b> * </b> </span></label>
+                                <label class="control-label"> Product Description <span class="text-danger"> <b> * </b> </span></label>
                                 <textarea id="summary-ckeditor2" name="product_addition_information" class="form-control" required></textarea>
                             </div>
                         </div>
