@@ -290,7 +290,7 @@
 
 
                     </div>
-                    <!--<div class="py-2 d-flex justify-content-between" style="font-size:13px;">
+                    <div class="py-2 d-flex justify-content-between" style="font-size:13px;">
                         <div>Availability:<span style="padding-left:10px; font-weight: bold;">{{$data->product_quantity}}</span></div>
                         <div style="font-weight: bold; padding-right: 10px;">
                             @if($data->product_qty > $data->product_quantity)
@@ -300,9 +300,9 @@
                             INSTOCK
                             @endif
                         </div>
-                    </div>-->
+                    </div>
 
-                    <!-- <div class=" row " style="font-size:10px; !important">
+                    <div class=" row " style="font-size:10px; !important">
                         @foreach($cartAttributes as $attValue)
                         @if($attValue->attribute_name != "Self")
                         <div class=" py-2 col-12 col-sm-5  col-md-4">
@@ -334,9 +334,9 @@
                         
 
                         @endforeach
-                    </div>-->
+                    </div>
 
-                    <!--<div class="col-12 col-sm-8 py-2  px-0 d-flex align-self-center priceCart2">
+                    <div class="col-12 col-sm-8 py-2  px-0 d-flex align-self-center priceCart2">
 
                         <div class="flex-w bo5 of-hidden">
                             <button type="button" class="zouple-qty-down" style="background-color:black;" onclick="updateProductQty({{$i}},'min')">
@@ -350,7 +350,7 @@
                             </button>
                         </div>
 
-                    </div>-->
+                    </div>
                 </div>
 
                 <?php 
