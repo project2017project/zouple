@@ -287,7 +287,20 @@
                         <div class="flex-w bo5 of-hidden zouple-qty-pill">
                             Quantity : <b>{{$data->product_qty}}</b>
                         </div>
+                        <div class="col-12 col-sm-4 py-2  priceCart2">
+                            <div class="flex-w bo5 of-hidden zouple-qty-control">
+                                <button type="button" class="zouple-qty-down disabled" style="background-color:black;" onclick="changeQuantity('min')" disabled="">
+                                    <i class="fs-12 fa fa-minus text-white" aria-hidden="true"></i>
+                                </button>
 
+                                <input class=" w-25 text-center num-product" type="number" name="qty" value="1" min="1" max="1" id="qty" onkeyup="changeQuantity('equal')" onblur="changeQuantity('equal', true)" disabled="">
+
+                                <button type="button" class="zouple-qty-up disabled" style="background-color:black;" onclick="changeQuantity('max')" disabled="">
+                                    <i class="fs-12 fa fa-plus text-white" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                        </div>
 
                     </div>
                     <!--<div class="py-2 d-flex justify-content-between" style="font-size:13px;">
