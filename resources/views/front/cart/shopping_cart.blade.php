@@ -282,25 +282,25 @@
                         @endforeach
                     </div>
 
-                    <div class="col-12 col-sm-8 py-2 px-0 d-flex align-self-center priceCart2">
+                    <!-- <div class="col-12 col-sm-8 py-2 px-0 d-flex align-self-center priceCart2">
 
                         <div class="flex-w bo5 of-hidden zouple-qty-pill">
                             Quantity : <b>{{$data->product_qty}}</b>
                         </div>
 
 
-                    </div>
-                    <div class="py-2 d-flex justify-content-between" style="font-size:13px;">
+                    </div> -->
+                    <!-- <div class="py-2 d-flex justify-content-between" style="font-size:13px;">
                         <div>Availability:<span style="padding-left:10px; font-weight: bold;">{{$data->product_quantity}}</span></div>
                         <div style="font-weight: bold; padding-right: 10px;">
                             @if($data->product_qty > $data->product_quantity)
                             OUTSTOCK
-                            <?php $stock++; ?>
+                            <?php //$stock++; ?>
                             @else
                             INSTOCK
                             @endif
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class=" row " style="font-size:10px; !important">
                         @foreach($cartAttributes as $attValue)
