@@ -631,7 +631,558 @@
 </section>
 </div>
 
+<script>
+    function check_pincodeStatus() {
+        var pincode = $('#pincode').val();
+        if (pincode != "") {
+            $.ajax({
+                url: '../check_pincodeStatus',
+                type: "GET",
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                data: "pincode=" + pincode,
+                success: function(data) {
+                    if (data > 0) {
+                        swal("Hurray!", 'We are delivering our products at this PINCODE.', "success");
 
+                    } else {
+                        swal("Oops!", 'Currently we are not delivering our products on this PINCODE but we will start our services shortly.', "warning");
+
+                    }
+
+
+
+                }
+            });
+        } else {
+            swal("Oops!", 'Kindly first enter pincode.', "warning");
+        }
+
+    }
+
+
+    function maxLengthCheck(object) {
+        if (object.value.length > object.maxLength)
+            object.value = object.value.slice(0, object.maxLength)
+    }
+
+    function isNumeric(evt) {
+        var theEvent = evt || window.event;
+        var key = theEvent.keyCode || theEvent.which;
+        key = String.fromCharCode(key);
+        var regex = /[0-9]|\./;
+        if (!regex.test(key)) {
+            theEvent.returnValue = false;
+            if (theEvent.preventDefault) theEvent.preventDefault();
+        }
+    }
+
+    function addTocartloginJs() {
+        /*$('#wait').show(); */
+        var filter = new Array();
+        var yesNow = 0;
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m != "0") {
+            /*alert(m);*/
+            filter.push(m);
+            yesNow = 1;
+        } else {
+            swal("Oops!", 'Please select {{$data->attribute_name}} of product', "warning");
+            yesNow = 0;
+        }
+
+        @endforeach
+        var pro_qty = getSafeProductQty();
+        var vendor_id = $('#vendor').val();
+        var product_id = $('#product_id').val();
+        var ip_address = $('#ip_address').val();
+        if (yesNow > 0) {
+            $.ajax({
+                url: '../addJSCartloginProduct',
+                type: "GET",
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                data: "vendor_id=" + vendor_id + "&filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id + "&ip_address=" + ip_address,
+                success: function(data) {
+                    if (data['cart_status'] == 'No') {
+                        swal("Product Added!", 'Product successfully added in your Cart.', "success");
+                        setTimeout(reloadPage, 1500);
+                    } else {
+                        swal("Oops!", 'Product is already available in your cart.', "warning");
+
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    
+    function addToBuyNowJs() {
+        /*$('#wait').show(); */
+        var filter = new Array();
+        var yesNow = 0;
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m != "0") {
+            /*alert(m);*/
+            filter.push(m);
+            yesNow = 1;
+        } else {
+            swal("Oops!", 'Please select {{$data->attribute_name}} of product', "warning");
+            yesNow = 0;
+        }
+
+        @endforeach
+        var pro_qty = getSafeProductQty();
+        var vendor_id = $('#vendor').val();
+        var product_id = $('#product_id').val();
+        var ip_address = $('#ip_address').val();
+        if (yesNow > 0) {
+            $.ajax({
+                url: '../addJSCartloginProduct',
+                type: "GET",
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                data: "vendor_id=" + vendor_id + "&filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id + "&ip_address=" + ip_address,
+                success: function(data) {
+                    if (data['cart_status'] == 'No') {
+                        window.location.replace("{{url('cart')}}");
+                        setTimeout(reloadPage, 1500);
+                    } else {
+                        swal("Oops!", 'Product is already available in your cart.', "warning");
+
+                    }
+                }
+            });
+        }
+    }
+
+
+
+    function addTocartJs() {
+        var filter = new Array();
+        var yesNow = 0;
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m != "0") {
+            /*alert(m);*/
+            filter.push(m);
+            yesNow = 1;
+        } else {
+            swal("Oops!", 'Please select {{$data->attribute_name}} of product', "warning");
+            yesNow = 0;
+        }
+
+        @endforeach
+        var pro_qty = getSafeProductQty();
+        var vendor_id = $('#vendor').val();
+        var product_id = $('#product_id').val();
+        var ip_address = $('#ip_address').val();
+
+        if (yesNow > 0) {
+            $.ajax({
+                url: '../addJSCartProduct',
+                type: "GET",
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                data: "vendor_id=" + vendor_id + "&filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id + "&ip_address=" + ip_address,
+                success: function(data) {
+                    if (data['cart_status'] == 'No') {
+                        swal("Product Added!", 'Product successfully added in your Cart.', "success");
+                        setTimeout(reloadPage, 1500);
+                    } else {
+                        swal("Oops!", 'Product is already available in your cart.', "warning");
+
+                    }
+                }
+            });
+        }
+    }
+
+
+    function buyNowAction() {
+        var filter = new Array();
+        var yesNow = 0;
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m != "0") {
+            /*alert(m);*/
+            filter.push(m);
+            yesNow = 1;
+        } else {
+            swal("Oops!", 'Please select {{$data->attribute_name}} of product', "warning");
+            yesNow = 0;
+        }
+
+        @endforeach
+        var pro_qty = getSafeProductQty();
+        var product_id = $('#product_id').val();
+        var ip_address = $('#ip_address').val();
+
+        if (yesNow > 0) {
+            var url = "../buyNowProduct?filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id;
+            window.location = url;
+        }
+
+
+    }
+
+
+
+
+    function normalizeStockQty(value) {
+        var qty = parseInt(value, 10);
+        return isNaN(qty) || qty < 0 ? 0 : qty;
+    }
+
+    function getSafeProductQty(options) {
+        options = options || {};
+        var qtyInput = $('#qty');
+        var rawValue = $.trim(qtyInput.val());
+
+        if (rawValue === '') {
+            if (options.allowBlank) {
+                return null;
+            }
+            qtyInput.val(1);
+            return 1;
+        }
+
+        var qty = parseInt(rawValue, 10);
+        if (isNaN(qty) || qty < 1) {
+            qty = 1;
+        }
+
+        var maxQty = parseInt(qtyInput.attr('max'), 10);
+        if (!isNaN(maxQty) && maxQty > 0 && qty > maxQty) {
+            qty = maxQty;
+        }
+
+        qtyInput.val(qty);
+        return qty;
+    }
+
+    function syncProductQuantityState(data) {
+        var availableQty = normalizeStockQty(data['qty']);
+        var currentQty = getSafeProductQty({allowBlank: true});
+
+        if (currentQty === null || isNaN(currentQty) || currentQty < 1) {
+            currentQty = 1;
+        }
+
+        if (availableQty > 0 && currentQty > availableQty) {
+            currentQty = availableQty;
+        }
+
+        $('#qty')
+            .val(currentQty)
+            .attr('max', availableQty > 0 ? availableQty : 1)
+            .prop('disabled', availableQty <= 0);
+
+        $('.zouple-qty-down, .zouple-qty-up')
+            .prop('disabled', availableQty <= 0)
+            .toggleClass('disabled', availableQty <= 0);
+
+        $('#stock_avl').html(availableQty > 0 ? 'Availability : ' + availableQty : 'Availability : Out of stock');
+    }
+
+
+
+    function changeQuantity(str, forceNormalize) {
+        var filter = new Array();
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m == "0") {
+            var dt = "{{$data->attribute_name}}";
+            swal("Oops!", 'Please select product ' + dt, "warning"); /*alert(m);*/
+
+        } else {
+            filter.push(m);
+        }
+        @endforeach
+        var pro_qty = getSafeProductQty({allowBlank: str === 'equal' && !forceNormalize});
+
+        if (pro_qty === null) {
+            return;
+        }
+
+        if (str == "min") {
+            pro_qty = pro_qty - 1;
+        } else if (str == "max") {
+            pro_qty = pro_qty + 1;
+        }
+
+        if (pro_qty < 1) {
+            pro_qty = 1;
+        }
+
+        $('#qty').val(pro_qty);
+
+        var product_id = $('#product_id').val();
+        $.ajax({
+            url: '../checkProductFilterPrice',
+            type: "GET",
+            beforeSend: function() {
+                $('#wait').show();
+            },
+            complete: function() {
+                $('#wait').hide();
+            },
+            beforeSend: function() {
+                $('#wait').show();
+            },
+            complete: function() {
+                $('#wait').hide();
+            },
+            data: "filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id,
+            success: function(data) {
+                if (data['stock_status'] == "INSTOCK") {
+                    $('#stockShow').html('IN STOCK');
+                    $('#cart_button').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='addTocartloginJs()'><span class='btn  m-0 px-5 py-2 prdBtn'  style='font-size:17px !important;'>ADD TO CART</span></span>");
+                    $('#button_buy').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='addToBuyNowJs()' id='btn_buy_now'><span class='btn m-0  py-2 prdBtn' style='padding-left:59px; padding-right:59px; font-size:17px !important;'>BUY NOW</span></span>");
+
+
+                } else {
+                    $('#stockShow').html('OUT OF STOCK');
+                    $('#cart_button').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='showOutStock()'><span class='btn  m-0 px-5 py-2 prdBtn'  style='font-size:17px !important;'>ADD TO CART</span></span>");
+
+                    $('#button_buy').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='showOutStock()' id='btn_buy_now'><span class='btn m-0  py-2 prdBtn' style='padding-left:59px; padding-right:59px; font-size:17px !important;'>BUY NOW</span></span>");
+
+                    if (data['filter_check'] == "YES") {
+                        showOutStock();
+                    }
+
+                }
+                /*alert(data['price']);*/
+                if (data['price'] == 0) {
+
+                } else {
+                    $('#net_amt').html(data['net_amt']);
+                    if (data['pro_price'] != data['net_amt']) {
+                        $('#price').html("'<i class='fa fa-inr''></i>'" + data['pro_price'] + "/-");
+                    } else {
+                        $('#price').html("");
+                    }
+                }
+                syncProductQuantityState(data);
+
+            }
+        });
+    }
+
+    function showOutStock() {
+        swal("Oops!", 'This much quantity is not in stock now, please check availability for more information.', "warning");
+    }
+
+    function reloadPage() {
+        location.reload();
+    }
+
+    function changeFilter() {
+        var filter = new Array();
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m != "0") {
+            /*alert(m);*/
+            filter.push(m);
+        }
+        @endforeach
+        var product_id = $('#product_id').val();
+        var pro_qty = getSafeProductQty();
+        $.ajax({
+            url: '../checkProductFilterPrice',
+            type: "GET",
+            beforeSend: function() {
+                $('#wait').show();
+            },
+            complete: function() {
+                $('#wait').hide();
+            },
+            beforeSend: function() {
+                $('#wait').show();
+            },
+            complete: function() {
+                $('#wait').hide();
+            },
+            data: "filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id,
+            success: function(data) {
+                if (data['stock_status'] == "INSTOCK") {
+                    $('#stockShow').html('INSTOCK');
+                    $('#cart_button').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='addTocartloginJs()'><span class='btn  m-0 px-5 py-2 prdBtn'  style='font-size:17px !important;'>ADD TO CART</span></span>");
+                    $('#button_buy').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='addToBuyNowJs()' id='btn_buy_now'><span class='btn m-0  py-2 prdBtn' style='padding-left:59px; padding-right:59px; font-size:17px !important;'>BUY NOW</span></span>");
+                } else {
+                    $('#stockShow').html('OUT OF STOCK');
+                    $('#cart_button').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='showOutStock()'><span class='btn  m-0 px-5 py-2 prdBtn' style='font-size:17px !important;'>ADD TO CART</span></span>");
+                    $('#button_buy').html("<span class='d-flex justify-content-between align-self-end' style='font-size:12px!important;' onclick='showOutStock()' id='btn_buy_now'><span class='btn m-0  py-2 prdBtn' style='padding-left:59px; padding-right:59px; font-size:17px !important;'>BUY NOW</span></span>");
+                    if (data['filter_check'] == "YES") {
+                        //showOutStock();
+                    }
+
+                }
+                if (data['price'] == 0) {
+
+                } else {
+                    $('#net_amt').html(data['net_amt']);
+                    if (data['pro_price'] != data['net_amt']) {
+                        $('#price').html("'<i class='fa fa-inr''></i>'" + data['pro_price'] + "/-");
+                    } else {
+                        $('#price').html("");
+                    }
+
+                }
+                syncProductQuantityState(data);
+
+
+
+            }
+        });
+    }
+
+
+    function addProductFavs(product_id) {
+        $.ajax({
+            url: '../product_add_fav',
+            type: "GET",
+            beforeSend: function() {
+                $('#wait').show();
+            },
+            complete: function() {
+                $('#wait').hide();
+            },
+            data: "product_id=" + product_id,
+            success: function(data) {
+                swal("Product Added!", 'Product successfully added in your Wishlist.', "success");
+
+                setTimeout(reloadPage, 1000);
+
+            }
+        });
+
+    }
+
+    function removeProductFavs(product_id) {
+        $.ajax({
+            url: '../product_remove_fav',
+            type: "GET",
+            beforeSend: function() {
+                $('#wait').show();
+            },
+            complete: function() {
+                $('#wait').hide();
+            },
+            data: "product_id=" + product_id,
+            success: function(data) {
+                swal("Product Remove!", 'Product successfully removed in your Wishlist.', "success");
+                setTimeout(reloadPage, 1000);
+            }
+        });
+
+    }
+
+
+
+    function addTowishlistloginJs() {
+        var filter = new Array();
+        var yesNow = 0;
+        @foreach($att_val as $data)
+        var m = $('#{{$data->attribute_name}}').val();
+        if (m != "0") {
+            /*alert(m);*/
+            filter.push(m);
+            yesNow = 1;
+        } else {
+            swal("Oops!", 'Please select {{$data->attribute_name}} of product', "warning");
+            yesNow = 0;
+        }
+
+        @endforeach
+        var pro_qty = getSafeProductQty();
+        var vendor_id = $('#vendor').val();
+        var product_id = $('#product_id').val();
+        if (yesNow > 0) {
+            $.ajax({
+                url: '../addJSWishListloginProduct',
+                type: "GET",
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                beforeSend: function() {
+                    $('#wait').show();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                },
+                data: "filter=" + filter + "&pro_qty=" + pro_qty + "&product_id=" + product_id,
+                success: function(data) {
+                    if (data['cart_status'] == 'No') {
+                        swal("Product Added!", 'Product successfully added in your Wishlist.', "success");
+                        setTimeout(reloadPage, 1500);
+                    } else {
+                        swal("Oops!", 'Product is already available in your Wishlist.', "warning");
+
+                    }
+                }
+            });
+        }
+    }
+
+    function currency(sel) {
+        var currency = sel.value;
+        $.ajax({
+            url: '../changeCurrency/' + currency,
+            type: "GET",
+            beforeSend: function() {
+                $('#wait').show();
+            },
+            complete: function() {
+                $('#wait').hide();
+            },
+            success: function(data) {
+                location.reload();
+            }
+        });
+    }
+
+</script>
 
 
 
