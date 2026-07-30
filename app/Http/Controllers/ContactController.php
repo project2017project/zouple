@@ -15,7 +15,7 @@ class ContactController extends Controller
 {
     public function contactList(Request $request)
     {
-       $page_title = "Contact - thezouple.com";
+       $page_title = "Contact - zouple.in";
         $data['site_data'] = DB::table('siteinfos')->orderby('siteinfo_id', 'asc')->get();
         return view('front.contact.contact',compact('page_title'), $data); 
     }
@@ -36,7 +36,7 @@ class ContactController extends Controller
 
     public function aboutPage(Request $request)
     {
-       $page_title = "About us - thezouple.com";
+       $page_title = "About us - zouple.in";
         $data['about_data'] = AdminRecycleBinService::activeTable('about')->orderby('about_id', 'asc')->get();
         return view('front.about.about',compact('page_title'), $data); 
     }

@@ -183,7 +183,7 @@ class ProfileController extends Controller
        
         $user_email = Auth::user()->email;
         $user_name = Auth::user()->name;
-        $logo_url = "https://thezouple.com/public/front/images/logo.png";
+        $logo_url = "https://zouple.in/public/front/images/logo.png";
         $order_date = DB::table('order_system')->where('order_number',$order_number)->value('order_date');
         $ord_date = date('d/M/Y', strtotime($order_date));
         

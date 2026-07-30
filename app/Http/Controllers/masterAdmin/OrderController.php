@@ -156,7 +156,7 @@ class OrderController extends Controller
         $subject = "Check Subject .";
         $input = $request->all();
         DB::table('order_system')->where('order_id',$input['order_id'])->update($input);
-        $logo_url = "https://thezouple.com/public/front/images/logo.png";
+        $logo_url = "https://zouple.in/public/front/images/logo.png";
         /*Mail Setting*/
         
         $tracking_number = $request->tracking_number;

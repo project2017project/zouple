@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
                 if (!defined('EUROSHIPPINCHARGE')) define('EUROSHIPPINCHARGE', $data->euro_shipping_charge);
                 if (!defined('MINIMUMKG')) define('MINIMUMKG', $data->minimum_charge);
                 if (!defined('RECYCLE_CLEANUP_DAYS')) define('RECYCLE_CLEANUP_DAYS', isset($data->recycle_cleanup_days) ? $data->recycle_cleanup_days : 90);
-                if (!defined('WEBSITE_URL')) define('WEBSITE_URL', "https://thezouple.com");
+                if (!defined('WEBSITE_URL')) define('WEBSITE_URL', "https://zouple.in");
             }
         } catch (\Exception $e) {
             // Database not available yet, define defaults

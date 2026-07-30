@@ -226,13 +226,13 @@
                     <div class="row">
                         <div class="col-md-6 text-center">
                             <div>
-                               <span class="h6"> Email:-</span> contact@thezouple.com
+                               <span class="h6"> Email:-</span> contact@zouple.in
 
                          </div>  
                         </div>
                         <div class="col-md-6 text-center">
                             <div class="">
-                                <span class="h6">Website:-</span> thezouple.com
+                                <span class="h6">Website:-</span> zouple.in
                             </div>
                         </div>
                     </div>

@@ -8,7 +8,7 @@ use App\Siteinfo;
 use DB;
 
 /*define('WEBSITE_URL', 'http://earthlyplush.com/new_earthly');*/
-define('WEBSITE_URL', 'http://thezouple.com/');
+define('WEBSITE_URL', 'http://zouple.in/');
 define('DS', DIRECTORY_SEPARATOR);
 define('PAGETITLE', 'The Zouple');
 

@@ -1742,8 +1742,8 @@ class CheckoutController extends Controller
         }
 
         $user_name = $orderUser->name;
-        $logo_url = "https://thezouple.com/public/front/images/logo.png";
-        $url = "https://thezouple.com/printInvoicesss/".$order_number;
+        $logo_url = "https://zouple.in/public/front/images/logo.png";
+        $url = "https://zouple.in/printInvoicesss/".$order_number;
         $order_date = $order->order_date;
         $ord_date = date('d/M/Y', strtotime($order_date));
         $datas = $order->product_details;
