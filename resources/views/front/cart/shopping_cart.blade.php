@@ -519,7 +519,7 @@
 
 
                 <div class="px-3 py-2 border-bottom d-flex justify-content-between zouple-summary-line">
-                    <div class="">Sub Total</div>
+                    <div class="">Cart Sub Total</div>
                     <div><i class="{{$iicon}} pr-2"></i><span>{{$ttl_net_amt}}</span></div>
                 </div>
                 <?php
