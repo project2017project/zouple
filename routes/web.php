@@ -968,3 +968,8 @@ Route::group(array('prefix' => 'masterAdmin','namespace'=>'masterAdmin'), functi
     });
 });
 /* ============================== Master Admin Code End =============================== */
+
+use App\Http\Controllers\PreAuthEmailController;
+
+Route::post('/pre-register/send-email-otp', [PreAuthEmailController::class, 'sendOtp'])->middleware('throttle:3,1');
+Route::post('/pre-register/verify-email-otp', [PreAuthEmailController::class, 'verifyOtp']);

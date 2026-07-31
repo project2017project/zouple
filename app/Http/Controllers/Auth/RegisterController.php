@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
@@ -48,10 +49,26 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        // return Validator::make($data, [
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        //     'password' => ['required', 'string', 'min:8', 'confirmed'],
+        // ]);
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'contact' => ['required', 'numeric'],
+            'email_token' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($data) {
+                    $cachedEmail = Cache::get('verified_email_token_' . $value);
+                    if (!$cachedEmail || $cachedEmail !== ($data['email'] ?? null)) {
+                        $fail('Please verify your email address before signing up.');
+                    }
+                },
+            ],
         ]);
     }
 
@@ -63,10 +80,21 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // return User::create([
+        //     'name' => $data['name'],
+        //     'email' => $data['email'],
+        //     'password' => Hash::make($data['password']),
+        // ]);
+
+        // Clear token from cache so it can't be reused
+        Cache::forget('verified_email_token_' . $data['email_token']);
+
         return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'name'              => $data['name'],
+            'email'             => $data['email'],
+            'email_verified_at' => now(), // Auto-verify since OTP was confirmed prior to submission
+            'password'          => Hash::make($data['password']),
+            'contact'             => $data['phone'] ?? null,
         ]);
     }
 }
