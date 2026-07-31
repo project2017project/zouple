@@ -368,7 +368,7 @@
 
                                 </div>
                                 <div id="sign_m1" class="tab-pane fade px-3">
-                                    <form action="{{url('registration')}}" method="post">
+                                    <!-- <form action="{{url('registration')}}" method="post">
                                         @csrf
                                         <div class="row">
                                             <div class="form-group pt-2 col-12 col-sm-12  col-md-12">
@@ -409,6 +409,72 @@
                                         </div>
                                         <div class="form-group pt-1 col-md-12 p-0">
                                             <button type="submit" class="cta border-0">
+                                                <span>Signup</span>
+                                                <svg width="13px" height="10px" viewBox="0 0 13 10">
+                                                    <path d="M1,5 L11,5"></path>
+                                                    <polyline points="8 1 12 5 8 9"></polyline>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </form> -->
+                                    <form action="{{ url('registration') }}" method="post" id="signupForm">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="form-group pt-2 col-12 col-sm-12 col-md-12">
+                                                <label for="name">Name:</label>
+                                                <input type="text" class="form-control" id="name" placeholder="Enter Full Name" name="name" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Email & OTP Section -->
+                                        <div class="row">
+                                            <div class="form-group pt-2 col-md-12">
+                                                <label for="signup_email">Email:</label>
+                                                <div class="input-group">
+                                                    <input type="email" class="form-control" id="signup_email" placeholder="Enter Email" name="email" required>
+                                                    <button type="button" class="btn btn-outline-secondary" id="btn_send_otp">Send OTP</button>
+                                                </div>
+                                                <!-- Hidden field for backend validation token -->
+                                                <input type="hidden" name="email_token" id="email_token">
+                                                <small id="email_status_msg" class="form-text"></small>
+                                            </div>
+                                        </div>
+
+                                        <!-- OTP Input Field (Hidden until Send OTP is clicked) -->
+                                        <div class="row" id="otp_container" style="display: none;">
+                                            <div class="form-group pt-2 col-md-12">
+                                                <label for="otp_input">Enter OTP:</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="otp_input" placeholder="6-digit OTP">
+                                                    <button type="button" class="btn btn-primary" id="btn_verify_otp">Verify OTP</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group pt-2 col-12 col-sm-6 col-md-6">
+                                                <label for="signup_pwd">Password:</label>
+                                                <input type="password" class="form-control password-field-full" id="signup_pwd" data-password-hint="signup_pwd_hint" placeholder="Enter Password" name="password" required>
+                                            </div>
+                                            <div class="form-group pt-2 col-12 col-sm-6 col-md-6">
+                                                <label for="signup_pwd_confirm">Confirm Password:</label>
+                                                <input type="password" class="form-control password-field" id="signup_pwd_confirm" placeholder="Enter Confirm password" name="password_confirmation" required>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="password-static-hint invalid mb-2" id="signup_pwd_hint">Your password must be more than 8 characters long. It should contain atleast 1 Uppercase, 1 Lowercase, 1 Numeric and 1 special character</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group pt-2 col-md-12">
+                                                <label for="signup_contact">Contact Number:</label>
+                                                <input type="number" class="form-control" id="signup_contact" placeholder="Enter Contact Number" name="contact" required>
+                                                <p class="trm_condi pt-3">By creating this account, you agree to our <a href="{{url('cms/terms-of-use')}}">Terms & Conditions</a> & <a href="{{url('/cms/private-policy')}}">Privacy Policy</a>.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group pt-1 col-md-12 p-0">
+                                            <button type="submit" class="cta border-0" id="btn_signup" disabled>
                                                 <span>Signup</span>
                                                 <svg width="13px" height="10px" viewBox="0 0 13 10">
                                                     <path d="M1,5 L11,5"></path>
@@ -743,6 +809,82 @@
     {
         document.getElementById("alertNoMessage").click();
     }
+
+    
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+
+    // 1. Send OTP
+    $('#btn_send_otp').click(function () {
+        var email = $('#signup_email').val();
+        if (!email) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        $('#btn_send_otp').prop('disabled', true).text('Sending...');
+
+        $.ajax({
+            url: "{{ url('/send-otp') }}", // Points to PreAuthEmailController@sendOtp
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                email: email
+            },
+            success: function (response) {
+                alert(response.message);
+                $('#otp_container').slideDown();
+                $('#btn_send_otp').text('Resend OTP').prop('disabled', false);
+            },
+            error: function (xhr) {
+                var err = xhr.responseJSON ? xhr.responseJSON.errors.email[0] : 'Failed to send OTP.';
+                alert(err);
+                $('#btn_send_otp').prop('disabled', false).text('Send OTP');
+            }
+        });
+    });
+
+    // 2. Verify OTP
+    $('#btn_verify_otp').click(function () {
+        var email = $('#signup_email').val();
+        var otp = $('#otp_input').val();
+
+        if (!otp) {
+            alert('Please enter the OTP.');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ url('/verify-otp') }}", // Points to PreAuthEmailController@verifyOtp
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                email: email,
+                otp: otp
+            },
+            success: function (response) {
+                // Store verified token in the hidden input field
+                $('#email_token').val(response.email_token);
+
+                // Lock email field and enable the submit button
+                $('#signup_email').prop('readonly', true);
+                $('#otp_container').slideUp();
+                $('#btn_send_otp').hide();
+                $('#email_status_msg').html('<span class="text-success">✔ Email verified successfully!</span>');
+                
+                // Enable Signup button
+                $('#btn_signup').prop('disabled', false);
+            },
+            error: function (xhr) {
+                var errMsg = xhr.responseJSON ? xhr.responseJSON.error : 'Invalid OTP.';
+                alert(errMsg);
+            }
+        });
+    });
+
+});
 </script>
 
 </html>
