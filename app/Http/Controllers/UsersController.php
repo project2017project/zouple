@@ -16,6 +16,7 @@ use Mail;
 use Config;
 use PDF;
 use App\Services\AdminRecycleBinService;
+use Illuminate\Support\Facades\Cache;
 
 class UsersController extends Controller
 {
@@ -128,62 +129,123 @@ class UsersController extends Controller
     
     /* ---------------------------- Registration Code Start ---------------------------- */
     
-    public function registration(Request $request)
-    {   
-        $data = $request->all();
-        $this->validate($request, [
-            'name' => ['required', 'max:255'],
-            'email' => ['required','email', 'max:255', 'unique:users'],
-            'password' => 'required|string|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/',
-            'contact' => 'required',
-            'password_confirmation' => 'required_with:password|same:password'
-        ]);
-        $token =  $request->_token;
-        $date=date('d-m-y');
-        $dates=date('d/m/Y');
-        User::insert([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'contact' => $data['contact'],
-            '_token' => $token,
-            'user_role' => 'FRONT',
-            'email_verified_at' => $date,
-            'date' =>$dates,
-        ]);
-        $user_data['name'] = $data['name'];
-        $user_data['email'] = $data['email'];
+    // public function registration(Request $request)
+    // {   
+    //     $data = $request->all();
+    //     $this->validate($request, [
+    //         'name' => ['required', 'max:255'],
+    //         'email' => ['required','email', 'max:255', 'unique:users'],
+    //         'password' => 'required|string|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/',
+    //         'contact' => 'required',
+    //         'password_confirmation' => 'required_with:password|same:password'
+    //     ]);
+    //     $token =  $request->_token;
+    //     $date=date('d-m-y');
+    //     $dates=date('d/m/Y');
+    //     User::insert([
+    //         'name' => $data['name'],
+    //         'email' => $data['email'],
+    //         'password' => Hash::make($data['password']),
+    //         'contact' => $data['contact'],
+    //         '_token' => $token,
+    //         'user_role' => 'FRONT',
+    //         'email_verified_at' => $date,
+    //         'date' =>$dates,
+    //     ]);
+    //     $user_data['name'] = $data['name'];
+    //     $user_data['email'] = $data['email'];
         
        
-        $fullName = $data['name'];
-        $email = $data['email'];
+    //     $fullName = $data['name'];
+    //     $email = $data['email'];
         
-        $token = User::where('email',$email)->value('_token');
-        $user_data['_token'] = $token;
+    //     $token = User::where('email',$email)->value('_token');
+    //     $user_data['_token'] = $token;
         
-        $userdata = array(
-                'email' 		=> 	$request->get('email'),
-                'password' 		=> 	$request->get('password'),
-                'user_role' 	=> 	'FRONT',
+    //     $userdata = array(
+    //             'email' 		=> 	$request->get('email'),
+    //             'password' 		=> 	$request->get('password'),
+    //             'user_role' 	=> 	'FRONT',
                 
-            );
+    //         );
             
-        if(Auth::attempt($userdata))
-        {
-            if(Auth::user()->is_active == 'ACTIVE')
-            {
-                $this->attachGuestCartToLoggedInUser($request);
-                $request->session()->flash('alert-success','Hurray! Your The Zouple account has been successfully created.');
-                return Redirect::back();
-            }
-        }
+    //     if(Auth::attempt($userdata))
+    //     {
+    //         if(Auth::user()->is_active == 'ACTIVE')
+    //         {
+    //             $this->attachGuestCartToLoggedInUser($request);
+    //             $request->session()->flash('alert-success','Hurray! Your The Zouple account has been successfully created.');
+    //             return Redirect::back();
+    //         }
+    //     }
       
         
         
         
             
-        /*return Redirect::back();*/
+    //     /*return Redirect::back();*/
+    // }
+
+    public function registration(Request $request)
+{   
+    $data = $request->all();
+    
+    $this->validate($request, [
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => 'required|string|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/',
+        'contact' => 'required',
+        'password_confirmation' => 'required_with:password|same:password',
+        'email_token' => [
+            'required',
+            'string',
+            function ($attribute, $value, $fail) use ($data) {
+                if (empty($value)) {
+                    $fail('Please request and verify your OTP first.');
+                    return;
+                }
+
+                $cachedEmail = Cache::get('verified_email_token_' . $value);
+
+                if (!$cachedEmail || strtolower($cachedEmail) !== strtolower($data['email'] ?? '')) {
+                    $fail('Please verify your email address before signing up.');
+                }
+            },
+        ],
+    ]);
+
+    // Clear token from cache so it cannot be reused
+    Cache::forget('verified_email_token_' . $request->email_token);
+
+    $token = $request->_token;
+    $date = date('d-m-y');
+    $dates = date('d/m/Y');
+
+    User::insert([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+        'contact' => $data['contact'],
+        '_token' => $token,
+        'user_role' => 'FRONT',
+        'email_verified_at' => now(), // Auto-verify since OTP was verified prior to signup
+        'date' => $dates,
+    ]);
+
+    $userdata = array(
+        'email'    => $request->get('email'),
+        'password' => $request->get('password'),
+        'user_role'=> 'FRONT',
+    );
+        
+    if (Auth::attempt($userdata)) {
+        if (Auth::user()->is_active == 'ACTIVE') {
+            $this->attachGuestCartToLoggedInUser($request);
+            $request->session()->flash('alert-success', 'Hurray! Your The Zouple account has been successfully created.');
+            return Redirect::back();
+        }
     }
+}
     
     /* ---------------------------- Registration Code End ---------------------------- */
     

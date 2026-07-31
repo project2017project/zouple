@@ -381,6 +381,7 @@
                                             <div class="form-group pt-2 col-md-12">
                                                 <label for="signup_email">Email:</label>
                                                 <input type="email" class="form-control" id="signup_email" placeholder="Enter Email" name="email" required>
+                                                <input type="hidden" name="email_token" id="email_token">
                                             </div>
                                         </div>
                                         <div class="row">
