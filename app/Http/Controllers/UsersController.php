@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use Alert;
 use Auth,View,Redirect,Response,Hash,Validator,DB;
@@ -151,7 +152,10 @@ class UsersController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'contact' => $data['contact'],
-            '_token' => $request->_token,
+            // A dedicated random token for the verification link (NOT the
+            // CSRF token) — this column is also what reset_password()
+            // reads from, so it doubles as that token going forward too.
+            '_token' => Str::random(60),
             'user_role' => 'FRONT',
             'date' => date('d/m/Y'),
         ]);
@@ -170,6 +174,37 @@ class UsersController extends Controller
     }
     
     /* ---------------------------- Registration Code End ---------------------------- */
+
+    /* ---------------------------- Email Verification Code Start ---------------------------- */
+
+    public function verify_email_registration(Request $request)
+    {
+        $token = $request->token;
+
+        if (! $token) {
+            $request->session()->flash('alert-danger', 'This verification link is invalid.');
+            return redirect('/');
+        }
+
+        $user = User::where('_token', $token)->first();
+
+        if (! $user) {
+            $request->session()->flash('alert-danger', 'This verification link is invalid or has expired.');
+            return redirect('/');
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            $request->session()->flash('alert-success', 'Your email is already verified. You can log in.');
+            return redirect('/');
+        }
+
+        $user->markEmailAsVerified();
+
+        $request->session()->flash('alert-success', 'Email verified successfully. You can now log in.');
+        return redirect('/');
+    }
+
+    /* ---------------------------- Email Verification Code End ---------------------------- */
     
     
     /* -------------------------- Password Forget Code Start -------------------------- */
