@@ -62,8 +62,8 @@ Route::get('blogShow/{slug}','BlogController@blogShowPage');
     
     Route::any('userlogin','UsersController@login');
     Route::any('registration','UsersController@registration');
-    Route::any('verify_email','UsersController@verify_email_registration');
-    Route::any('resend_verify/{token}','UsersController@resend_verify');
+    /*Route::any('verify_email','UsersController@verify_email_registration');
+    Route::any('resend_verify/{token}','UsersController@resend_verify');*/
     Route::any('logout','UsersController@logout');
     
     Route::any('forgotpassword','UsersController@reset_password');

@@ -331,15 +331,6 @@
                                             <input type="password" class="form-control password-field" id="login_pwd" placeholder="Enter password" name="password" required>
 
                                         </div>
-                                        @if(session('verify_token'))
-    <div class="alert alert-warning mt-2">
-        Your email address is not verified.<br>
-
-        <a href="{{ url('resend_verify/'.session('verify_token')) }}">
-            Click here to resend verification email
-        </a>
-    </div>
-@endif
                                         <div class="h6 m-0 text-right p-2 text-secondary forgatPass">Forget Password?</div>
                                         <div class="form-group col-md-12">
                                             <button type="submit" class="cta border-0">
@@ -626,13 +617,7 @@
         </footer>
 
     </div>
-@if(session('verify_token') || session('alert-danger'))
-<script>
-$(document).ready(function () {
-    $('#logSign').modal('show');
-});
-</script>
-@endif
+
 </body>
 
 <!--======================  custom css =====================-->
