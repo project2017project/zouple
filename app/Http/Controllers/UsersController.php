@@ -96,6 +96,13 @@ class UsersController extends Controller
             );
         if(Auth::attempt($userdata))
         {
+            if(! Auth::user()->hasVerifiedEmail())
+            {
+                Auth::logout();
+                $request->session()->flash('alert-danger','Your email address is not verified. Please verify your email before logging in.');
+                return Redirect::back();
+            }
+
             if(Auth::user()->is_active == 'ACTIVE')
             {
                 $this->attachGuestCartToLoggedInUser($request);
@@ -138,51 +145,28 @@ class UsersController extends Controller
             'contact' => 'required',
             'password_confirmation' => 'required_with:password|same:password'
         ]);
-        $token =  $request->_token;
-        $date=date('d-m-y');
-        $dates=date('d/m/Y');
-        User::insert([
+
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'contact' => $data['contact'],
-            '_token' => $token,
+            '_token' => $request->_token,
             'user_role' => 'FRONT',
-            'email_verified_at' => $date,
-            'date' =>$dates,
+            'date' => date('d/m/Y'),
         ]);
-        $user_data['name'] = $data['name'];
-        $user_data['email'] = $data['email'];
-        
-       
-        $fullName = $data['name'];
-        $email = $data['email'];
-        
-        $token = User::where('email',$email)->value('_token');
-        $user_data['_token'] = $token;
-        
-        $userdata = array(
-                'email' 		=> 	$request->get('email'),
-                'password' 		=> 	$request->get('password'),
-                'user_role' 	=> 	'FRONT',
-                
-            );
-            
-        if(Auth::attempt($userdata))
-        {
-            if(Auth::user()->is_active == 'ACTIVE')
-            {
-                $this->attachGuestCartToLoggedInUser($request);
-                $request->session()->flash('alert-success','Hurray! Your The Zouple account has been successfully created.');
-                return Redirect::back();
-            }
-        }
-      
-        
-        
-        
-            
-        /*return Redirect::back();*/
+
+        // Do NOT log the user in here. Instead, send the verification email
+        // using the same DB-driven mail settings the password-reset email
+        // uses (see reset_password()) so it actually sends.
+        $user->sendCustomVerificationEmail();
+
+        $request->session()->flash(
+            'alert-success',
+            'Registration successful. Please check your email and verify your account before logging in.'
+        );
+
+        return Redirect::back();
     }
     
     /* ---------------------------- Registration Code End ---------------------------- */
