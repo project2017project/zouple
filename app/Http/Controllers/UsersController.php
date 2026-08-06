@@ -85,38 +85,51 @@ class UsersController extends Controller
      /* ------------------------------------- Login Code Start -------------------------- */
     
     public function login(Request $request)
+{
+    if($request->isMethod('post'))
     {
-     if($request->isMethod('post'))
-     {
-        $userdata = array(
-                'email' 		=> 	$request->get('email'),
-                'password' 		=> 	$request->get('password'),
-                'user_role' 	=> 	'FRONT',
-                
-            );
+        $userdata = [
+            'email'     => $request->email,
+            'password'  => $request->password,
+            'user_role' => 'FRONT',
+        ];
+
         if(Auth::attempt($userdata))
         {
-            if(Auth::user()->is_active == 'ACTIVE')
+            // Email not verified
+            if (is_null(Auth::user()->email_verified_at))
             {
-                $this->attachGuestCartToLoggedInUser($request);
-                return Redirect::back();
+                $token = Auth::user()->_token;
+
+                Auth::logout();
+
+                return Redirect::back()
+                    ->with('verify_token', $token)
+                    ->with('alert-danger', 'Please verify your email before login.');
             }
-            else
+
+            // Account blocked
+            if(Auth::user()->is_active != 'ACTIVE')
             {
                 Auth::logout();
-                $request->session()->flash('alert-danger','Your account has been blocked deactivated by admin.');
-                return Redirect::back();
+
+                return Redirect::back()
+                    ->with('alert-danger', 'Your account has been blocked by admin.');
             }
+
+            // Success
+            $this->attachGuestCartToLoggedInUser($request);
+
+            return Redirect::back()
+                ->with('alert-success', 'Login successful.');
         }
-        {
-            Auth::logout();
-            $request->session()->flash('alert-danger','It seems you have entered an invalid Zouple Now id or password. Please try with a valid id and password.');
-            return Redirect::back();
-            
-        }
+
+        return Redirect::back()
+            ->with('alert-danger', 'Invalid email or password.');
     }
-        
-    }
+
+    return Redirect::back();
+}
     
     public function logout()
     {
@@ -138,7 +151,8 @@ class UsersController extends Controller
             'contact' => 'required',
             'password_confirmation' => 'required_with:password|same:password'
         ]);
-        $token =  $request->_token;
+        // $token = $request->_token;
+        $token = md5(uniqid(rand(), true));
         $date=date('d-m-y');
         $dates=date('d/m/Y');
         User::insert([
@@ -148,7 +162,8 @@ class UsersController extends Controller
             'contact' => $data['contact'],
             '_token' => $token,
             'user_role' => 'FRONT',
-            'email_verified_at' => $date,
+            // 'email_verified_at' => $date,
+            'email_verified_at' => null,
             'date' =>$dates,
         ]);
         $user_data['name'] = $data['name'];
@@ -161,22 +176,12 @@ class UsersController extends Controller
         $token = User::where('email',$email)->value('_token');
         $user_data['_token'] = $token;
         
-        $userdata = array(
-                'email' 		=> 	$request->get('email'),
-                'password' 		=> 	$request->get('password'),
-                'user_role' 	=> 	'FRONT',
-                
-            );
-            
-        if(Auth::attempt($userdata))
-        {
-            if(Auth::user()->is_active == 'ACTIVE')
-            {
-                $this->attachGuestCartToLoggedInUser($request);
-                $request->session()->flash('alert-success','Hurray! Your The Zouple account has been successfully created.');
-                return Redirect::back();
-            }
-        }
+        $request->session()->flash(
+            'alert-success',
+            'Registration successful. Please verify your email before login.'
+        );
+
+        return Redirect::back();
       
         
         
@@ -186,8 +191,81 @@ class UsersController extends Controller
     }
     
     /* ---------------------------- Registration Code End ---------------------------- */
-    
-    
+    public function verify_email_registration(Request $request)
+{
+    $user = User::where('_token', $request->token)->first();
+
+    if (!$user) {
+        return redirect('/')->with('alert-danger', 'Invalid verification link.');
+    }
+
+    if (!is_null($user->email_verified_at)) {
+        return redirect('/')->with('alert-success', 'Your email is already verified.');
+    }
+
+    $user->email_verified_at = now();
+    $user->_token = md5(uniqid(rand(), true)); // Generate a new token
+    $user->save();
+
+    return redirect('/')->with('alert-success', 'Email verified successfully. You can login now.');
+}
+    public function resend_verify($token)
+{
+    $user = User::where('_token', $token)->first();
+
+    if (!$user) {
+        return back()->with('alert-danger', 'Invalid request.');
+    }
+
+    if (!is_null($user->email_verified_at)) {
+        return back()->with('alert-success', 'Your email is already verified.');
+    }
+
+    $mail = DB::table('mail_settings')->where('slug','registration')->first();
+
+    if ($mail) {
+        Config::set('mail', [
+            'driver'     => $mail->driver,
+            'host'       => $mail->host,
+            'port'       => $mail->port,
+            'from'       => [
+                'address' => $mail->from_address,
+                'name'    => $mail->from_name
+            ],
+            'encryption' => $mail->encryption,
+            'username'   => $mail->username,
+            'password'   => $mail->password,
+            'sendmail'   => '/usr/sbin/sendmail -bs',
+            'pretend'    => false,
+        ]);
+    }
+
+    $url = WEBSITE_URL . "/verify_email_registration?token=" . $user->_token;
+
+    $messageBody = "
+    <h2>Verify Your Email</h2>
+
+    <p>Hello {$user->name},</p>
+
+    <p>Please click below to verify your email.</p>
+
+    <p>
+    <a href='{$url}' style='padding:12px 20px;background:#000;color:#fff;text-decoration:none;'>
+    Verify Email
+    </a>
+    </p>
+
+    <p>Regards,<br>The Zouple Team</p>
+    ";
+
+    Mail::send([], [], function ($message) use ($user, $messageBody) {
+        $message->to($user->email)
+                ->subject('Verify your The Zouple account')
+                ->setBody($messageBody, 'text/html');
+    });
+
+    return back()->with('alert-success', 'Verification email sent successfully.');
+}
     /* -------------------------- Password Forget Code Start -------------------------- */
     
     public function reset_password(Request $request)
