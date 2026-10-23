@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 
 class AdminMediaService
 {
-    protected $cloudinary;
+    // protected $cloudinary;
 
-    public function __construct(CloudinaryService $cloudinary)
-    {
-        $this->cloudinary = $cloudinary;
-    }
+    // public function __construct(CloudinaryService $cloudinary)
+    // {
+    //     $this->cloudinary = $cloudinary;
+    // }
 
     public function uploadImage($file, $folder, $localFolder = null)
     {
@@ -26,72 +26,142 @@ class AdminMediaService
         return $this->upload($file, $folder, $localFolder ?: $folder, 'video');
     }
 
-    public function deleteMedia($value, $localFolder, $publicId = null, $resourceType = 'image')
-    {
+    // public function deleteMedia($value, $localFolder, $publicId = null, $resourceType = 'image')
+    // {
+    //     $value = trim((string) $value);
+    //     $publicId = trim((string) $publicId);
+
+    //     if ($publicId !== '') {
+    //         $this->cloudinary->deleteFile($publicId, $resourceType);
+    //         return;
+    //     }
+
+    //     if (preg_match('#^https?://#i', $value)) {
+    //         $derivedPublicId = $this->cloudinary->getPublicIdFromUrl($value);
+    //         if ($derivedPublicId) {
+    //             $this->cloudinary->deleteFile($derivedPublicId, $resourceType);
+    //         }
+    //         return;
+    //     }
+
+    //     if ($value === '') {
+    //         return;
+    //     }
+
+    //     $path = public_path('upload/' . trim($localFolder, '/') . '/' . ltrim(str_replace('\\', '/', $value), '/'));
+    //     if (File::exists($path)) {
+    //         File::delete($path);
+    //     }
+    // }
+    public function deleteMedia(
+    $value,
+    $localFolder,
+    $publicId = null,
+    $resourceType = 'image'
+    ) {
         $value = trim((string) $value);
-        $publicId = trim((string) $publicId);
 
-        if ($publicId !== '') {
-            $this->cloudinary->deleteFile($publicId, $resourceType);
+        // पुराने remote URL के लिए कोई API call नहीं होगी।
+        if ($value === '' || preg_match('#^https?://#i', $value)) {
             return;
         }
 
-        if (preg_match('#^https?://#i', $value)) {
-            $derivedPublicId = $this->cloudinary->getPublicIdFromUrl($value);
-            if ($derivedPublicId) {
-                $this->cloudinary->deleteFile($derivedPublicId, $resourceType);
-            }
+        $directory = realpath(
+            public_path('upload/' . trim($localFolder, '/'))
+        );
+
+        if (!$directory) {
             return;
         }
 
-        if ($value === '') {
-            return;
-        }
+        $path = realpath(
+            $directory . '/' . ltrim(str_replace('\\', '/', $value), '/')
+        );
 
-        $path = public_path('upload/' . trim($localFolder, '/') . '/' . ltrim(str_replace('\\', '/', $value), '/'));
-        if (File::exists($path)) {
+        if (
+            $path &&
+            strpos($path, $directory . DIRECTORY_SEPARATOR) === 0 &&
+            is_file($path)
+        ) {
             File::delete($path);
         }
     }
 
+    // protected function upload($file, $folder, $localFolder, $resourceType)
+    // {
+    //     $this->validateUpload($file, $resourceType, $folder);
+
+    //     if ($this->cloudinary->isConfigured()) {
+    //         $result = $resourceType === 'video'
+    //             ? $this->cloudinary->uploadVideo($file, $folder)
+    //             : $this->cloudinary->uploadImage($file, $folder);
+
+    //         if (!empty($result['url'])) {
+    //             Log::info('Cloudinary media upload saved.', [
+    //                 'folder' => $folder,
+    //                 'resource_type' => $resourceType,
+    //                 'url' => $result['url'],
+    //                 'public_id' => $result['public_id'],
+    //             ]);
+
+    //             return [
+    //                 'path' => $result['url'],
+    //                 'public_id' => $result['public_id'],
+    //                 'cloudinary' => true,
+    //             ];
+    //         }
+
+    //         Log::error('Cloudinary upload returned no secure URL.', [
+    //             'folder' => $folder,
+    //             'resource_type' => $resourceType,
+    //         ]);
+    //         throw new \RuntimeException('Cloudinary upload failed. No secure URL was returned.');
+    //     }
+
+    //     throw new \RuntimeException('Cloudinary is not configured or the SDK is not installed. New uploads are not saved locally.');
+    // }
     protected function upload($file, $folder, $localFolder, $resourceType)
     {
         $this->validateUpload($file, $resourceType, $folder);
 
-        if ($this->cloudinary->isConfigured()) {
-            $result = $resourceType === 'video'
-                ? $this->cloudinary->uploadVideo($file, $folder)
-                : $this->cloudinary->uploadImage($file, $folder);
+        $localFolder = trim(str_replace('\\', '/', $localFolder), '/');
 
-            if (!empty($result['url'])) {
-                Log::info('Cloudinary media upload saved.', [
-                    'folder' => $folder,
-                    'resource_type' => $resourceType,
-                    'url' => $result['url'],
-                    'public_id' => $result['public_id'],
-                ]);
-
-                return [
-                    'path' => $result['url'],
-                    'public_id' => $result['public_id'],
-                    'cloudinary' => true,
-                ];
-            }
-
-            Log::error('Cloudinary upload returned no secure URL.', [
-                'folder' => $folder,
-                'resource_type' => $resourceType,
-            ]);
-            throw new \RuntimeException('Cloudinary upload failed. No secure URL was returned.');
+        if (!preg_match('#^[a-zA-Z0-9_-]+(?:/[a-zA-Z0-9_-]+)*$#', $localFolder)) {
+            throw new \InvalidArgumentException('Invalid local media folder.');
         }
 
-        throw new \RuntimeException('Cloudinary is not configured or the SDK is not installed. New uploads are not saved locally.');
+        $directory = public_path('upload/' . $localFolder);
+
+        if (!File::isDirectory($directory)) {
+            File::makeDirectory($directory, 0755, true, true);
+        }
+
+        if (!is_dir($directory) || !is_writable($directory)) {
+            throw new \RuntimeException(
+                'Local media upload failed: upload directory is not writable.'
+            );
+        }
+
+        $filename = $this->uniqueFilename($file->getClientOriginalName());
+
+        $file->move($directory, $filename);
+
+        return [
+            'path' => $filename,
+            'public_id' => null,
+            'cloudinary' => false,
+        ];
     }
 
     protected function validateUpload($file, $resourceType, $folder = '')
     {
+        // if (!$file instanceof UploadedFile && !$file instanceof SymfonyUploadedFile) {
+        //     return;
+        // }
         if (!$file instanceof UploadedFile && !$file instanceof SymfonyUploadedFile) {
-            return;
+            throw new \InvalidArgumentException(
+                'Please upload a valid media file.'
+            );
         }
 
         $extension = strtolower($file->getClientOriginalExtension());
@@ -113,7 +183,10 @@ class AdminMediaService
             $label = 'JPEG, PNG, GIF, or WebP image up to ' . $maxMb . ' MB';
         }
 
-        if (!$file->isValid() || $file->getSize() > $maxBytes || (!in_array($extension, $allowedExtensions, true) && !in_array($mime, $allowedMimes, true))) {
+        // if (!$file->isValid() || $file->getSize() > $maxBytes || (!in_array($extension, $allowedExtensions, true) && !in_array($mime, $allowedMimes, true))) {
+        //     throw new \InvalidArgumentException('Please upload a valid ' . $label . '.');
+        // }
+        if (!$file->isValid() || $file->getSize() > $maxBytes || (!in_array($extension, $allowedExtensions, true) || !in_array($mime, $allowedMimes, true))) {
             throw new \InvalidArgumentException('Please upload a valid ' . $label . '.');
         }
     }

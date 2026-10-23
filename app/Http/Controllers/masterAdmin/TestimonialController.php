@@ -12,7 +12,7 @@ use Schema;
 use Log;
 use App\Services\AdminRecycleBinService;
 use App\Services\AdminMediaService;
-use App\Services\CloudinaryService;
+// use App\Services\CloudinaryService;
 
 class TestimonialController extends Controller
 {
@@ -284,18 +284,28 @@ class TestimonialController extends Controller
       return $upload['path'];
   }
 
-  private function storePlatformLogo($file)
-  {
-      $cloudinary = app(CloudinaryService::class);
-      if ($cloudinary->isConfigured()) {
-          $upload = $cloudinary->uploadImage($file, 'testimonial-logos');
-          if (!empty($upload['url'])) {
-              return $upload['url'];
-          }
-      }
+//   private function storePlatformLogo($file)
+//   {
+//       $cloudinary = app(CloudinaryService::class);
+//       if ($cloudinary->isConfigured()) {
+//           $upload = $cloudinary->uploadImage($file, 'testimonial-logos');
+//           if (!empty($upload['url'])) {
+//               return $upload['url'];
+//           }
+//       }
 
-      return $this->storeLocalPlatformLogo($file);
-  }
+//       return $this->storeLocalPlatformLogo($file);
+//   }
+    private function storePlatformLogo($file)
+    {
+        $upload = app(AdminMediaService::class)->uploadImage(
+            $file,
+            'testimonial-logos',
+            'testimonial-logos'
+        );
+
+        return $upload['path'];
+    }
 
   private function storeLocalPlatformLogo($file)
   {

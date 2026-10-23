@@ -61,7 +61,8 @@ class Handler extends ExceptionHandler
 
         $message = $exception->getMessage();
 
-        return strpos($message, 'Cloudinary') !== false
+        return strpos($message, 'Local media upload failed') !== false
+            || strpos($message, 'Cloudinary') !== false
             || strpos($message, 'New uploads are not saved locally') !== false
             || strpos($message, 'Please upload a valid') !== false;
     }

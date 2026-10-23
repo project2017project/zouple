@@ -365,7 +365,7 @@
 
           var percent = (progressEvent.loaded / progressEvent.total) * 100;
           if (percent >= 100) {
-            setAdminUploadProgress(box, 100, 'Upload received. Processing on Cloudinary...', 'Please wait while the server saves the Cloudinary link.');
+            setAdminUploadProgress(box, 100, 'Upload received. Saving media...', 'Please wait while the server saves your file.');
           } else {
             setAdminUploadProgress(box, percent, 'Uploading...', Math.round(progressEvent.loaded / 1024 / 1024) + ' MB of ' + Math.round(progressEvent.total / 1024 / 1024) + ' MB uploaded.');
           }
