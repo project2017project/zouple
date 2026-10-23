@@ -29,14 +29,14 @@ if (!function_exists('z_media_url')) {
         }
 
         if (file_exists(public_path('uploads/' . $value))) {
-            return asset('public/uploads/' . $value);
+            return asset('uploads/' . $value);
         }
 
         if (!file_exists(public_path('upload/' . $value))) {
             return $placeholder ? asset($placeholder) : asset('img/dark-logo.png');
         }
 
-        return asset('public/upload/' . $value);
+        return asset('upload/' . $value);
     }
 }
 
