@@ -13,8 +13,6 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
-    RewriteRule ^upload/(.+)$ public/upload/$1 [L]
-    RewriteRule ^uploads/(.+)$ public/uploads/$1 [L]
 </IfModule>
 
 # php -- BEGIN cPanel-generated handler, do not edit
